@@ -28,6 +28,10 @@ Find the manifest.json file in the Packages folder of your project and edit it t
 ```
 
 <!-- DOC-START -->
+## Sample Output
+
+<img src="https://github.com/coryleach/UnityProcgen/blob/master/Images/Sample_00.PNG?raw=true" />
+
 ## Usage
 
 This code is still in a pretty rough state but I've uploaded it here for those interested.  
