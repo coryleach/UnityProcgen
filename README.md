@@ -38,7 +38,7 @@ This code is still in a pretty rough state but I've uploaded it here for those i
 There is a demo package included in the demo folder. After importing this as a package just double click it to import.  
   
 The demo requires that you import Shader Graph and the Universal Render Pipeline packages from the package manager.  
-Ensure both 'depth texture' and 'opaque texture' options on your renderer asset or set unity to use the included render assets.
+Ensure both 'depth texture' and 'opaque texture' options are enabled on your renderer asset or set unity to use the included render assets.
 The demo may require 2019.3
 <!-- DOC-END -->
 
