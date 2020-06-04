@@ -10,20 +10,23 @@ public static class TerrainMeshUtility
     float topLeftZ = (height - 1) / 2f;
 
     int lodIncrement = Mathf.Max(1, levelOfDetail * 2);
-    int vertsPerLine = (width - 1) / lodIncrement + 1;
+    int vertsPerLine = (width-1) / lodIncrement + 1;
+    int vertsPerColumn = (height-1) / lodIncrement + 1;
     
-    var meshData = new MeshData(vertsPerLine,vertsPerLine);
+    var meshData = new MeshData(vertsPerLine,vertsPerColumn);
     int vertIndex = 0;
-
     int triangleIndex = 0;
-    for (int y = 0; y < height; y += lodIncrement)
+    for (int i = 0; i < vertsPerColumn; i++)
     {
-      for (int x = 0; x < width; x += lodIncrement)
+      for (int j = 0; j < vertsPerLine; j++)
       {
+        int x = j * lodIncrement;
+        int y = i * lodIncrement;
+        
         meshData.vertices[vertIndex] = new Vector3(topLeftX + x,heightMap[y*width + x], topLeftZ - y);
         meshData.uv[vertIndex] = new Vector2(x/(float)width, y/(float)height);
-        
-        if (x < width - 1 && y < height - 1)
+
+        if (j < (vertsPerLine-1) && i < (vertsPerColumn-1))
         {
           triangleIndex = meshData.AddTriangle(triangleIndex, vertIndex, vertIndex + vertsPerLine + 1, vertIndex + vertsPerLine);
           triangleIndex = meshData.AddTriangle(triangleIndex, vertIndex + vertsPerLine + 1, vertIndex, vertIndex + 1);
@@ -32,6 +35,20 @@ public static class TerrainMeshUtility
         vertIndex++;
       }
     }
+    
+    /*for (int y = 0; y < height; y += lodIncrement)
+    {
+      for (int x = 0; x < width; x += lodIncrement)
+      {
+        if (x < width - 1 && y < height - 1)
+        {
+          //triangleIndex = meshData.AddTriangle(triangleIndex, vertIndex, vertIndex + vertsPerLine, vertIndex + 1);
+          //triangleIndex = meshData.AddTriangle(triangleIndex, vertIndex + 1, vertIndex + vertsPerLine + 1, vertIndex + vertsPerLine);
+          triangleIndex = meshData.AddTriangle(triangleIndex, vertIndex, vertIndex + vertsPerLine + 1, vertIndex + vertsPerLine);
+          triangleIndex = meshData.AddTriangle(triangleIndex, vertIndex + vertsPerLine + 1, vertIndex, vertIndex + 1);
+        }
+      }
+    }*/
 
     return meshData;
   }
@@ -50,11 +67,12 @@ public class MeshData
     this.uv = uv;
   }
   
-  public MeshData(int width, int height)
+  public MeshData(int vertsWide, int vertsHigh)
   {
-    vertices = new Vector3[width * height];
-    uv = new Vector2[width * height];
-    triangles = new int[(width - 1) * (height - 1) * 6];
+    vertices = new Vector3[vertsWide * vertsHigh];
+    uv = new Vector2[vertsWide * vertsHigh];
+    triangles = new int[(vertsWide-1) * (vertsHigh-1) * 6];
+    
   }
 
   //Add the triangle and return the next index

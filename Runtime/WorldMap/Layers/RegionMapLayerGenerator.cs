@@ -6,8 +6,9 @@ using UnityEngine;
 public class RegionMapLayerGenerator : ScriptableObject
 {
   public int regionCount = 5;
+  public float waterLevel = 0.2380952f;
   
-  public void AddToWorld(WorldMapData mapData, float waterLevel)
+  public void AddToWorld(WorldMapData mapData)
   {
     var rng = new System.Random(mapData.seed);
     var regionLayer = new RegionMapLayerData();

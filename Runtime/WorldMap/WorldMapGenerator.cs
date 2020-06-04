@@ -17,9 +17,6 @@ public class WorldMapGenerator : MonoBehaviour
 
     [SerializeField] 
     private PoissonMapLayerGenerator poissonMapGenerator;
-    
-    [SerializeField] 
-    private float waterLevel = 0.2380952f;
 
     [SerializeField] private int seed = 100;
     
@@ -38,7 +35,7 @@ public class WorldMapGenerator : MonoBehaviour
             height = mapHeight
         };
         heightMapGenerator.AddToWorld(worldData);
-        regionMapGenerator.AddToWorld(worldData,waterLevel);
+        regionMapGenerator.AddToWorld(worldData);
         poissonMapGenerator.AddToWorld(worldData);
         DisplayMap(worldData);
     }
