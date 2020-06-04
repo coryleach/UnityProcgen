@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace Gameframe.Procgen
 {
-    [CreateAssetMenu]
-    public class HeightMapLayerGenerator : ScriptableObject
+    [CreateAssetMenu(menuName = "Gameframe/Procgen/Layers/HeightMapLayerGenerator")]
+    public class HeightMapLayerGenerator : WorldMapLayerGenerator
     {
         public enum MapType
         {
@@ -66,7 +66,7 @@ namespace Gameframe.Procgen
             };
         }
 
-        public void AddToWorld(WorldMapData worldMapData)
+        public override void AddToWorld(WorldMapData worldMapData)
         {
             worldMapData.layers.Add(Generate(worldMapData.width,worldMapData.height,worldMapData.seed));
         }

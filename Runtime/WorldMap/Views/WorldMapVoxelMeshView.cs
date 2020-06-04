@@ -15,9 +15,7 @@ namespace Gameframe.Procgen
     [SerializeField] private int chunkWidth = 16;
 
     [SerializeField] private int chunkHeight = 16;
-
-    [SerializeField] private WorldMapGenerator _generator;
-
+    
     [SerializeField] private bool edges = false;
 
     [SerializeField] private float edgeThickness = 1f;
@@ -26,12 +24,11 @@ namespace Gameframe.Procgen
 
     [SerializeField] private List<WorldMapViewChunk> chunkList = new List<WorldMapViewChunk>();
 
+    /// <summary>
+    /// Start method here exists just to give us the enable checkbox in the inspector
+    /// </summary>
     public void Start()
     {
-      if (_generator != null)
-      {
-
-      }
     }
 
     private void OnDisable()

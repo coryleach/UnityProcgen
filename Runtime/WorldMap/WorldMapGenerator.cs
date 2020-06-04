@@ -1,66 +1,44 @@
-﻿//Ignore those dumb 'never assigned to' warnings cuz this is Unity and our fields are serialized 
-#pragma warning disable CS0649
-
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Gameframe.Procgen
 {
-    public class WorldMapGenerator : MonoBehaviour
+  [CreateAssetMenu(menuName = "Gameframe/Procgen/WorldMapGenerator")]
+  public class WorldMapGenerator : ScriptableObject
+  {
+    [SerializeField] private int mapWidth = 100;
+    [SerializeField] private int mapHeight = 100;
+    [SerializeField] private List<WorldMapLayerGenerator> layerGenerators = new List<WorldMapLayerGenerator>();
+    
+    public WorldMapData GenerateMap(int seed)
     {
-        [SerializeField] private int mapWidth = 100;
-
-        [SerializeField] private int mapHeight = 100;
-
-        [SerializeField] private HeightMapLayerGenerator heightMapGenerator;
-
-        [SerializeField] private RegionMapLayerGenerator regionMapGenerator;
-
-        [SerializeField] private PoissonMapLayerGenerator poissonMapGenerator;
-
-        [SerializeField] private int seed = 100;
-
-        private void Start()
-        {
-            GenerateMap();
-        }
-
-        [ContextMenu("GenerateMap")]
-        public void GenerateMap()
-        {
-            var worldData = new WorldMapData
-            {
-                seed = seed,
-                width = mapWidth,
-                height = mapHeight
-            };
-            heightMapGenerator.AddToWorld(worldData);
-            regionMapGenerator.AddToWorld(worldData);
-            poissonMapGenerator.AddToWorld(worldData);
-            DisplayMap(worldData);
-        }
-
-        private void DisplayMap(WorldMapData mapData)
-        {
-            var mapViews = GetComponents<IWorldMapView>();
-            foreach (var view in mapViews)
-            {
-                view.DisplayMap(mapData);
-            }
-        }
-
-        private void OnValidate()
-        {
-            if (mapWidth <= 0)
-            {
-                mapWidth = 1;
-            }
-
-            if (mapHeight <= 0)
-            {
-                mapHeight = 1;
-            }
-        }
-
+      var worldData = new WorldMapData
+      {
+        seed = seed,
+        width = mapWidth,
+        height = mapHeight
+      };
+      
+      for (int i = 0; i < layerGenerators.Count; i++)
+      {
+        layerGenerators[i].AddToWorld(worldData);
+      }
+      
+      return worldData;
     }
+
+    private void OnValidate()
+    {
+      if (mapWidth <= 0)
+      {
+        mapWidth = 1;
+      }
+
+      if (mapHeight <= 0)
+      {
+        mapHeight = 1;
+      }
+    }
+  }
 
 }

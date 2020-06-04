@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Gameframe.Procgen
 {
-    [CustomEditor(typeof(WorldMapGenerator), true)]
+    [CustomEditor(typeof(WorldMapGenController), true)]
     public class WorldMapGeneratorEditor : Editor
     {
         private bool autoUpdate = false;
@@ -14,14 +14,14 @@ namespace Gameframe.Procgen
             base.OnInspectorGUI();
             if (EditorGUI.EndChangeCheck() && autoUpdate)
             {
-                ((WorldMapGenerator) target).GenerateMap();
+                ((WorldMapGenController) target).GenerateMap();
             }
 
             autoUpdate = EditorGUILayout.Toggle("Auto Update", autoUpdate);
 
             if (GUILayout.Button("Generate"))
             {
-                ((WorldMapGenerator) target).GenerateMap();
+                ((WorldMapGenController) target).GenerateMap();
             }
         }
     }

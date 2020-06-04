@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Gameframe.Procgen
 {
     [System.Serializable]
-    public class RegionMapLayerData : WorldMapLayerData
+    public class RegionMapLayerData : IWorldMapLayerData
     {
         public int[] regionMap;
         public List<RegionData> regions = new List<RegionData>();

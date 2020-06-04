@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Gameframe.Procgen
 {
@@ -8,14 +9,16 @@ namespace Gameframe.Procgen
         public int seed;
         public int width;
         public int height;
-        public List<WorldMapLayerData> layers = new List<WorldMapLayerData>();
+        
+        [SerializeReference]
+        public List<IWorldMapLayerData> layers = new List<IWorldMapLayerData>();
 
         /// <summary>
         /// Gets the first layer of the specified type
         /// </summary>
         /// <typeparam name="T">Type derived from WorldMapLayerData</typeparam>
         /// <returns>Returns the first layer of the requested type found. Otherwise null if no layer of that type exists.</returns>
-        public T GetLayer<T>() where T : WorldMapLayerData
+        public T GetLayer<T>() where T : class, IWorldMapLayerData
         {
             foreach (var layer in layers)
             {

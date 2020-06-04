@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Gameframe.Procgen
 {
     [System.Serializable]
-    public class PoissonMapLayerData : WorldMapLayerData
+    public class PoissonMapLayerData : IWorldMapLayerData
     {
         public List<Vector2Int> points = new List<Vector2Int>();
     }

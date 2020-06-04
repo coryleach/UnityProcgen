@@ -4,13 +4,13 @@ using UnityEngine;
 
 namespace Gameframe.Procgen
 {
-  [CreateAssetMenu]
-  public class RegionMapLayerGenerator : ScriptableObject
+  [CreateAssetMenu(menuName = "Gameframe/Procgen/Layers/RegionMapLayerGenerator")]
+  public class RegionMapLayerGenerator : WorldMapLayerGenerator
   {
     public int regionCount = 5;
     public float waterLevel = 0.2380952f;
 
-    public void AddToWorld(WorldMapData mapData)
+    public override void AddToWorld(WorldMapData mapData)
     {
       var rng = new System.Random(mapData.seed);
       var regionLayer = new RegionMapLayerData();
