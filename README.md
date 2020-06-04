@@ -27,7 +27,15 @@ Find the manifest.json file in the Packages folder of your project and edit it t
 }
 ```
 
-<!-- DOC-START --><!-- DOC-END -->
+<!-- DOC-START -->
+## Usage
+
+This code is still in a pretty rough state but I've uploaded it here for those interested.  
+There is a demo package included in the demo folder. After importing this as a package just double click it to import.  
+  
+The demo requires that you import Shader Graph and the Universal Render Pipeline packages from the package manager.  
+Ensure both 'depth texture' and 'opaque texture' options on your renderer asset or set unity to use the included render assets.  
+<!-- DOC-END -->
 
 ## Author
 
