@@ -1,0 +1,1 @@
+{ "name": "com.gameframe.procgen.Editor", "references": [ "com.gameframe.procgen" ], "optionalUnityReferences": [], "includePlatforms": [ "Editor" ], "excludePlatforms": [] }

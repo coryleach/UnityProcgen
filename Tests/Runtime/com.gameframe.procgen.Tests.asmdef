@@ -1,0 +1,1 @@
+{ "name": "com.gameframe.procgen.Tests", "references": [ "com.gameframe.procgen" ], "optionalUnityReferences": ["TestAssemblies"], "includePlatforms": [], "excludePlatforms": [] }

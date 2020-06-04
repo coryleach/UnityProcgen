@@ -1,0 +1,17 @@
+{
+  "githubUrl": "",
+  "name": "com.gameframe.procgen",
+  "displayName": "Gameframe.Procgen",
+  "repositoryName": "UnityProcgen",
+  "version": "0.0.1",
+  "description": "Library of utilitys for procedural generation",
+  "type": "library",
+  "keywords": [],
+  "author": {
+    "name": "Cory Leach",
+    "email": "cory.leach@gmail.com",
+    "url": "https://github.com/coryleach",
+    "twitter": "coryleach",
+    "github": "coryleach"
+  }
+}
