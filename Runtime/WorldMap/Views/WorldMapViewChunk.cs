@@ -1,17 +1,23 @@
-﻿using UnityEngine;
+﻿//Ignore those dumb 'never assigned to' warnings cuz this is Unity and our fields are serialized 
+#pragma warning disable CS0649
 
-public class WorldMapViewChunk : MonoBehaviour
+using UnityEngine;
+
+namespace Gameframe.WorldMapGen
 {
-    [SerializeField] private MeshFilter _meshFilter;
-    [SerializeField] private MeshRenderer _meshRenderer;
-
-    public void SetTexture(Texture2D texture)
+    public class WorldMapViewChunk : MonoBehaviour
     {
-        _meshRenderer.sharedMaterial.mainTexture = texture;
-    }
+        [SerializeField] private MeshFilter _meshFilter;
+        [SerializeField] private MeshRenderer _meshRenderer;
 
-    public void SetMesh(Mesh mesh)
-    {
-        _meshFilter.mesh = mesh;
+        public void SetTexture(Texture2D texture)
+        {
+            _meshRenderer.sharedMaterial.mainTexture = texture;
+        }
+
+        public void SetMesh(Mesh mesh)
+        {
+            _meshFilter.mesh = mesh;
+        }
     }
 }

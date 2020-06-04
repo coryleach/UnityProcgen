@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-[System.Serializable]
-public class WorldMapLayerData
+﻿namespace Gameframe.WorldMapGen
 {
-    
+  [System.Serializable]
+  public class WorldMapLayerData
+  {
+  }
 }

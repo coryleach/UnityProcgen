@@ -1,26 +1,28 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(WorldMapGenerator),true)]
-public class WorldMapGeneratorEditor : Editor
+namespace Gameframe.WorldMapGen
 {
-
-    private bool autoUpdate = false;
-    
-    public override void OnInspectorGUI()
+    [CustomEditor(typeof(WorldMapGenerator), true)]
+    public class WorldMapGeneratorEditor : Editor
     {
-        EditorGUI.BeginChangeCheck();
-        base.OnInspectorGUI();
-        if (EditorGUI.EndChangeCheck() && autoUpdate )
+        private bool autoUpdate = false;
+
+        public override void OnInspectorGUI()
         {
-            ((WorldMapGenerator)target).GenerateMap();
-        }
-        
-        autoUpdate = EditorGUILayout.Toggle("Auto Update", autoUpdate);
-        
-        if (GUILayout.Button("Generate"))
-        {
-            ((WorldMapGenerator)target).GenerateMap();
+            EditorGUI.BeginChangeCheck();
+            base.OnInspectorGUI();
+            if (EditorGUI.EndChangeCheck() && autoUpdate)
+            {
+                ((WorldMapGenerator) target).GenerateMap();
+            }
+
+            autoUpdate = EditorGUILayout.Toggle("Auto Update", autoUpdate);
+
+            if (GUILayout.Button("Generate"))
+            {
+                ((WorldMapGenerator) target).GenerateMap();
+            }
         }
     }
 }

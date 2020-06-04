@@ -1,8 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public interface IWorldMapView
+﻿namespace Gameframe.WorldMapGen
 {
-  void DisplayMap(WorldMapData mapData);
+  public interface IWorldMapView
+  {
+    void DisplayMap(WorldMapData mapData);
+  }
 }
+
+

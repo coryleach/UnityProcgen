@@ -1,23 +1,30 @@
-﻿using UnityEngine;
+﻿//Ignore those dumb 'never assigned to' warnings cuz this is Unity and our fields are serialized 
+#pragma warning disable CS0649
 
-public class WoldMapTerrainMeshView : MonoBehaviour, IWorldMapView
+using UnityEngine;
+
+namespace Gameframe.WorldMapGen
 {
-    [SerializeField] private MeshFilter _meshFilter = null;
-
-    [SerializeField, Range(0,6)] private int levelOfDetail;
-    
-    void Start()
+    public class WoldMapTerrainMeshView : MonoBehaviour, IWorldMapView
     {
-    }
+        [SerializeField] private MeshFilter _meshFilter = null;
 
-    public void DisplayMap(WorldMapData worldMapData)
-    {
-        if (!enabled)
+        [SerializeField, Range(0,6)] private int levelOfDetail;
+        
+        //This is here just to get the enabled checkbox in editor
+        private void Start()
         {
-            return;
         }
-        var heightMap = worldMapData.GetLayer<HeightMapLayerData>().heightMap;
-        var meshData = TerrainMeshUtility.GenerateMesh(heightMap,worldMapData.width,worldMapData.height,levelOfDetail);
-        _meshFilter.mesh = meshData.CreateMesh();
+
+        public void DisplayMap(WorldMapData worldMapData)
+        {
+            if (!enabled)
+            {
+                return;
+            }
+            var heightMap = worldMapData.GetLayer<HeightMapLayerData>().heightMap;
+            var meshData = TerrainMeshUtility.GenerateMesh(heightMap,worldMapData.width,worldMapData.height,levelOfDetail);
+            _meshFilter.mesh = meshData.CreateMesh();
+        }
     }
 }
