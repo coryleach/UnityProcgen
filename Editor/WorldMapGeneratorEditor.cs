@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace Gameframe.WorldMapGen
+namespace Gameframe.Procgen
 {
     [CustomEditor(typeof(WorldMapGenerator), true)]
     public class WorldMapGeneratorEditor : Editor

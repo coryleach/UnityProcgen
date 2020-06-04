@@ -1,4 +1,4 @@
-﻿namespace Gameframe.WorldMapGen
+﻿namespace Gameframe.Procgen
 {
   public interface IWorldMapView
   {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Gameframe.WorldMapGen
+namespace Gameframe.Procgen
 {
     [System.Serializable]
     public class WorldMapData

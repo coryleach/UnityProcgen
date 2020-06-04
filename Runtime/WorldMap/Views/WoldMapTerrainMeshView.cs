@@ -3,7 +3,7 @@
 
 using UnityEngine;
 
-namespace Gameframe.WorldMapGen
+namespace Gameframe.Procgen
 {
     public class WoldMapTerrainMeshView : MonoBehaviour, IWorldMapView
     {

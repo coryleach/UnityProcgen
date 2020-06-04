@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Gameframe.WorldMapGen
+namespace Gameframe.Procgen
 {
   public static class Noise
   {

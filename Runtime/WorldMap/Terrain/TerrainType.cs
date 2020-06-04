@@ -4,7 +4,7 @@
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace Gameframe.WorldMapGen
+namespace Gameframe.Procgen
 {
   [System.Serializable]
   public class TerrainType

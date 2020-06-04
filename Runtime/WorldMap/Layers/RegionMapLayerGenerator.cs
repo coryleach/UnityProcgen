@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Gameframe.WorldMapGen
+namespace Gameframe.Procgen
 {
   [CreateAssetMenu]
   public class RegionMapLayerGenerator : ScriptableObject

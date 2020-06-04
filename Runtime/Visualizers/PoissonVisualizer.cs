@@ -2,7 +2,7 @@
 //Ignore those dumb 'never assigned to' warnings cuz this is Unity and our fields are serialized 
 #pragma warning disable CS0649
 
-namespace Gameframe.WorldMapGen
+namespace Gameframe.Procgen
 {
   public class PoissonVisualizer : MonoBehaviour
   {

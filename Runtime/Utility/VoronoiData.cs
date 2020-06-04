@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Gameframe.WorldMapGen
+namespace Gameframe.Procgen
 {
   [Serializable]
   public class VoronoiData
