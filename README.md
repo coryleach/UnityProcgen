@@ -6,7 +6,7 @@
   </a>
 </p>
 
-Library of utilitys for procedural generation
+Library of utilities for procedural generation
 
 ## Quick Package Install
 
