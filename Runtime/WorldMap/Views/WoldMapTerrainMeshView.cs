@@ -10,6 +10,10 @@ namespace Gameframe.Procgen
         [SerializeField] private MeshFilter _meshFilter = null;
 
         [SerializeField, Range(0,6)] private int levelOfDetail;
+
+        [SerializeField] private float heightScale = 1;
+
+        [SerializeField] private TerrainTable terrainTable = null;
         
         //This is here just to get the enabled checkbox in editor
         private void Start()
@@ -23,8 +27,20 @@ namespace Gameframe.Procgen
                 return;
             }
             var heightMap = worldMapData.GetLayer<HeightMapLayerData>().heightMap;
-            var meshData = TerrainMeshUtility.GenerateMesh(heightMap,worldMapData.width,worldMapData.height,levelOfDetail);
-            _meshFilter.mesh = meshData.CreateMesh();
+
+            if (terrainTable == null)
+            {
+                var meshData = TerrainMeshUtility.GenerateMesh(heightMap,worldMapData.width,worldMapData.height,heightScale,levelOfDetail);
+                _meshFilter.mesh = meshData.CreateMesh();
+            }
+            else
+            {
+                var meshData = TerrainMeshUtility.GenerateMesh(heightMap,worldMapData.width,worldMapData.height,levelOfDetail,
+                    x => terrainTable.GetTerrainType(x).Elevation * heightScale, 
+                    x => terrainTable.GetTerrainType(x).ColorGradient.Evaluate(1));
+                _meshFilter.mesh = meshData.CreateMesh();
+            }
+            
         }
     }
 }

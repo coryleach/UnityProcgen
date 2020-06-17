@@ -38,11 +38,15 @@ namespace Gameframe.Procgen
     private float _elevation;
     public float Elevation => _elevation;
 
-    [SerializeField] private Color _lowColor = Color.black;
+    /*[SerializeField] private Color _lowColor = Color.black;
     public Color LowColor => _lowColor;
 
     [FormerlySerializedAs("_color")] [SerializeField]
     private Color _highColor = Color.white;
-    public Color HighColor => _highColor;
+    public Color HighColor => _highColor;*/
+
+    [SerializeField]
+    private Gradient gradient;
+    public Gradient ColorGradient => gradient;
   }
 }
