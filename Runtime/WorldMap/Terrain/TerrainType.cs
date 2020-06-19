@@ -34,16 +34,21 @@ namespace Gameframe.Procgen
       set => _threshold = value;
     }
 
-    [FormerlySerializedAs("_meshHeight")] [SerializeField]
-    private float _elevation;
-    public float Elevation => _elevation;
+    [FormerlySerializedAs("_elevation")] [SerializeField]
+    private float _minElevation;
+    public float MinElevation
+    {
+      get => _minElevation;
+      set => _minElevation = value;
+    }
 
-    /*[SerializeField] private Color _lowColor = Color.black;
-    public Color LowColor => _lowColor;
-
-    [FormerlySerializedAs("_color")] [SerializeField]
-    private Color _highColor = Color.white;
-    public Color HighColor => _highColor;*/
+    [SerializeField]
+    private float _maxElevation;
+    public float MaxElevation
+    {
+      get => _maxElevation;
+      set => _maxElevation = value;
+    }
 
     [SerializeField]
     private Gradient gradient;

@@ -196,6 +196,16 @@ namespace Gameframe.Procgen
         {
           regions[i].Floor = regions[i - 1].Threshold;
         }
+
+        if (i > 0 && regions[i].MinElevation < regions[i - 1].MaxElevation)
+        {
+          regions[i].MinElevation = regions[i - 1].MaxElevation;
+        }
+        
+        if (regions[i].MaxElevation < regions[i].MinElevation)
+        {
+          regions[i].MaxElevation = regions[i].MinElevation;
+        }
       }
     }
 

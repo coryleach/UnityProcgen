@@ -12,6 +12,10 @@ namespace Gameframe.Procgen
             Falloff,
             NoiseWithFalloff
         }
+
+        [SerializeField] private bool step = false;
+
+        [SerializeField] private int stepCount = 10;
         
         [SerializeField] private Vector2 offset = Vector2.zero;
 
@@ -56,7 +60,14 @@ namespace Gameframe.Procgen
             {
                 for (int x = 0; x < width; x++)
                 {
-                    heightMap[y * width + x] = noiseMap[x, y];
+                    var val = noiseMap[x, y];
+
+                    if (step)
+                    {
+                        val = Mathf.RoundToInt(val * stepCount) / (float)stepCount;
+                    }
+                    
+                    heightMap[y * width + x] = val;
                 }
             }
             
