@@ -4,14 +4,12 @@ namespace Gameframe.Procgen
 {
     public class WorldMapTextureView : MonoBehaviour, IWorldMapView
     {
-        [SerializeField] private Renderer _renderer = null;
+        [SerializeField] private Material _material = null;
         [SerializeField] private bool mainTexture = false;
         [SerializeField] private string texturePropertyName = "_BaseMap";
 
         [SerializeField] private TerrainTable _terrainTable = null;
-
-        [SerializeField] private bool scaleRenderer = false;
-
+        
         [SerializeField] private bool gradiate = false;
 
         [SerializeField] private bool fillRegions = false;
@@ -24,8 +22,21 @@ namespace Gameframe.Procgen
         [SerializeField] private Color[] regionColors = new Color[0];
         [SerializeField] private FilterMode filterMode = FilterMode.Point;
 
-        public void DisplayMap(WorldMapData worldMapData)
+        [SerializeField] private bool scaleTexture = false;
+        [SerializeField] private float textureScale = 2f;
+
+        private void Start()
         {
+            //This is here just to show the enabled checkbox in the unity inspector
+        }
+        
+        public async void DisplayMap(WorldMapData worldMapData)
+        {
+            if (!enabled)
+            {
+                return;
+            }
+            
             var heightMapLayer = worldMapData.GetLayer<HeightMapLayerData>();
             var regionMapLayer = worldMapData.GetLayer<RegionMapLayerData>();
 
@@ -98,9 +109,9 @@ namespace Gameframe.Procgen
             texture.filterMode = filterMode;
             SetTexture(texture);
 
-            if (scaleRenderer)
+            if (scaleTexture)
             {
-                _renderer.transform.localScale = new Vector3(width, height, 1);
+                await TextureScale.BilinearAsync(texture, Mathf.Min(2048,Mathf.RoundToInt(width * textureScale)), Mathf.Min(2048,Mathf.RoundToInt(height * textureScale)));
             }
         }
 
@@ -108,11 +119,11 @@ namespace Gameframe.Procgen
         {
             if (!mainTexture)
             {
-                _renderer.sharedMaterial.SetTexture(texturePropertyName, texture);
+                _material.SetTexture(texturePropertyName, texture);
             }
             else
             {
-                _renderer.sharedMaterial.mainTexture = texture;
+                _material.mainTexture = texture;
             }
         }
 

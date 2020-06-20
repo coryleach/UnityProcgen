@@ -13,7 +13,7 @@ Library of utilitities for procedural generation
 #### Using UnityPackageManager (for Unity 2019.3 or later)
 Open the package manager window (menu: Window > Package Manager)<br/>
 Select "Add package from git URL...", fill in the pop-up with the following link:<br/>
-https://github.com/coryleach/UnityProcgen.git#0.0.2<br/>
+https://github.com/coryleach/UnityProcgen.git#0.0.3<br/>
 
 #### Using UnityPackageManager (for Unity 2019.1 or later)
 
@@ -21,7 +21,7 @@ Find the manifest.json file in the Packages folder of your project and edit it t
 ```js
 {
   "dependencies": {
-    "com.gameframe.procgen": "https://github.com/coryleach/UnityProcgen.git#0.0.2",
+    "com.gameframe.procgen": "https://github.com/coryleach/UnityProcgen.git#0.0.3",
     ...
   },
 }
@@ -29,6 +29,8 @@ Find the manifest.json file in the Packages folder of your project and edit it t
 
 <!-- DOC-START -->
 ## Sample Output
+
+<img src="https://github.com/coryleach/UnityProcgen/blob/master/Images/Sample_01.PNG?raw=true" />
 
 <img src="https://github.com/coryleach/UnityProcgen/blob/master/Images/Sample_00.PNG?raw=true" />
 

@@ -31,42 +31,42 @@ namespace Gameframe.Procgen
                     var right = mapX + 1 < width ? terrainMap[mapX + 1, mapY] : null;
                     var left = mapX - 1 >= 0 ? terrainMap[mapX - 1, mapY] : null;
 
-                    meshData.AddUpQuad(x, y, terrain.Elevation);
+                    meshData.AddUpQuad(x, y, terrain.MinElevation);
 
-                    if (left != null && left.Elevation < terrain.Elevation)
+                    if (left != null && left.MinElevation < terrain.MinElevation)
                     {
-                        meshData.AddLeftQuad(x, y, terrain.Elevation, terrain.Elevation - left.Elevation);
+                        meshData.AddLeftQuad(x, y, terrain.MinElevation, terrain.MinElevation - left.MinElevation);
                     }
                     else if (edges && mapX - 1 < 0)
                     {
-                        meshData.AddLeftQuad(x, y, terrain.Elevation, terrain.Elevation + edgeThickness);
+                        meshData.AddLeftQuad(x, y, terrain.MinElevation, terrain.MinElevation + edgeThickness);
                     }
 
-                    if (front != null && front.Elevation < terrain.Elevation)
+                    if (front != null && front.MinElevation < terrain.MinElevation)
                     {
-                        meshData.AddFrontQuad(x, y, terrain.Elevation, terrain.Elevation - front.Elevation);
+                        meshData.AddFrontQuad(x, y, terrain.MinElevation, terrain.MinElevation - front.MinElevation);
                     }
                     else if (edges && mapY + 1 >= height)
                     {
-                        meshData.AddFrontQuad(x, y, terrain.Elevation, terrain.Elevation + edgeThickness);
+                        meshData.AddFrontQuad(x, y, terrain.MinElevation, terrain.MinElevation + edgeThickness);
                     }
 
-                    if (right != null && right.Elevation < terrain.Elevation)
+                    if (right != null && right.MinElevation < terrain.MinElevation)
                     {
-                        meshData.AddRightQuad(x, y, terrain.Elevation, terrain.Elevation - right.Elevation);
+                        meshData.AddRightQuad(x, y, terrain.MinElevation, terrain.MinElevation - right.MinElevation);
                     }
                     else if (edges && mapX + 1 >= width)
                     {
-                        meshData.AddRightQuad(x, y, terrain.Elevation, terrain.Elevation + edgeThickness);
+                        meshData.AddRightQuad(x, y, terrain.MinElevation, terrain.MinElevation + edgeThickness);
                     }
 
-                    if (back != null && back.Elevation < terrain.Elevation)
+                    if (back != null && back.MinElevation < terrain.MinElevation)
                     {
-                        meshData.AddBackQuad(x, y, terrain.Elevation, terrain.Elevation - back.Elevation);
+                        meshData.AddBackQuad(x, y, terrain.MinElevation, terrain.MinElevation - back.MinElevation);
                     }
                     else if (edges && mapY - 1 < 0)
                     {
-                        meshData.AddBackQuad(x, y, terrain.Elevation, terrain.Elevation + edgeThickness);
+                        meshData.AddBackQuad(x, y, terrain.MinElevation, terrain.MinElevation + edgeThickness);
                     }
                 }
             }
@@ -98,42 +98,42 @@ namespace Gameframe.Procgen
                     var right = mapX + 1 < width ? terrainMap[mapY * width + mapX + 1] : null;
                     var left = mapX - 1 >= 0 ? terrainMap[mapY * width + mapX - 1] : null;
 
-                    meshData.AddUpQuad(x, y, terrain.Elevation);
+                    meshData.AddUpQuad(x, y, terrain.MinElevation);
 
-                    if (left != null && left.Elevation < terrain.Elevation)
+                    if (left != null && left.MinElevation < terrain.MinElevation)
                     {
-                        meshData.AddLeftQuad(x, y, terrain.Elevation, terrain.Elevation - left.Elevation);
+                        meshData.AddLeftQuad(x, y, terrain.MinElevation, terrain.MinElevation - left.MinElevation);
                     }
                     else if (edges && mapX - 1 < 0)
                     {
-                        meshData.AddLeftQuad(x, y, terrain.Elevation, terrain.Elevation + edgeThickness);
+                        meshData.AddLeftQuad(x, y, terrain.MinElevation, terrain.MinElevation + edgeThickness);
                     }
 
-                    if (front != null && front.Elevation < terrain.Elevation)
+                    if (front != null && front.MinElevation < terrain.MinElevation)
                     {
-                        meshData.AddFrontQuad(x, y, terrain.Elevation, terrain.Elevation - front.Elevation);
+                        meshData.AddFrontQuad(x, y, terrain.MinElevation, terrain.MinElevation - front.MinElevation);
                     }
                     else if (edges && mapY + 1 >= height)
                     {
-                        meshData.AddFrontQuad(x, y, terrain.Elevation, terrain.Elevation + edgeThickness);
+                        meshData.AddFrontQuad(x, y, terrain.MinElevation, terrain.MinElevation + edgeThickness);
                     }
 
-                    if (right != null && right.Elevation < terrain.Elevation)
+                    if (right != null && right.MinElevation < terrain.MinElevation)
                     {
-                        meshData.AddRightQuad(x, y, terrain.Elevation, terrain.Elevation - right.Elevation);
+                        meshData.AddRightQuad(x, y, terrain.MinElevation, terrain.MinElevation - right.MinElevation);
                     }
                     else if (edges && mapX + 1 >= width)
                     {
-                        meshData.AddRightQuad(x, y, terrain.Elevation, terrain.Elevation + edgeThickness);
+                        meshData.AddRightQuad(x, y, terrain.MinElevation, terrain.MinElevation + edgeThickness);
                     }
 
-                    if (back != null && back.Elevation < terrain.Elevation)
+                    if (back != null && back.MinElevation < terrain.MinElevation)
                     {
-                        meshData.AddBackQuad(x, y, terrain.Elevation, terrain.Elevation - back.Elevation);
+                        meshData.AddBackQuad(x, y, terrain.MinElevation, terrain.MinElevation - back.MinElevation);
                     }
                     else if (edges && mapY - 1 < 0)
                     {
-                        meshData.AddBackQuad(x, y, terrain.Elevation, terrain.Elevation + edgeThickness);
+                        meshData.AddBackQuad(x, y, terrain.MinElevation, terrain.MinElevation + edgeThickness);
                     }
                 }
             }

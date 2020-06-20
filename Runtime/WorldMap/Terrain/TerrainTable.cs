@@ -16,7 +16,7 @@ namespace Gameframe.Procgen
       {
         if (value <= regions[i].Threshold)
         {
-          return regions[i].HighColor;
+          return regions[i].ColorGradient.Evaluate(1);
         }
       }
 
@@ -40,8 +40,8 @@ namespace Gameframe.Procgen
 
     public static Color GetGradiatedColor(TerrainType region, float value)
     {
-      var intensity = Mathf.InverseLerp(region.Threshold, region.Floor, value);
-      return Color.Lerp(region.HighColor, region.LowColor, intensity);
+      var intensity = Mathf.InverseLerp(region.Floor, region.Threshold, value);
+      return region.ColorGradient.Evaluate(intensity);
     }
 
     public TerrainType GetTerrainType(float value)
@@ -86,7 +86,7 @@ namespace Gameframe.Procgen
         for (int x = 0; x < width; x++)
         {
           var index = y * width + x;
-          colorMap[index] = gradiate ? GetGradiatedColor(terrainMap[x, y], noiseMap[x, y]) : terrainMap[x, y].HighColor;
+          colorMap[index] = gradiate ? GetGradiatedColor(terrainMap[x, y], noiseMap[x, y]) : terrainMap[x, y].ColorGradient.Evaluate(1);
         }
       }
 
@@ -98,7 +98,7 @@ namespace Gameframe.Procgen
       var colorMap = new Color[noiseMap.Length];
       for (int i = 0; i < colorMap.Length; i++)
       {
-        colorMap[i] = gradiate ? GetGradiatedColor(terrainMap[i], noiseMap[i]) : terrainMap[i].HighColor;
+        colorMap[i] = gradiate ? GetGradiatedColor(terrainMap[i], noiseMap[i]) : terrainMap[i].ColorGradient.Evaluate(1);
       }
 
       return colorMap;
@@ -116,7 +116,7 @@ namespace Gameframe.Procgen
         {
           var index = y * width + x;
           colorMap[index] =
-            gradiate ? GetGradiatedColor(terrainMap[index], noiseMap[x, y]) : terrainMap[index].HighColor;
+            gradiate ? GetGradiatedColor(terrainMap[index], noiseMap[x, y]) : terrainMap[index].ColorGradient.Evaluate(1);
         }
       }
 
@@ -195,6 +195,16 @@ namespace Gameframe.Procgen
         else
         {
           regions[i].Floor = regions[i - 1].Threshold;
+        }
+
+        if (i > 0 && regions[i].MinElevation < regions[i - 1].MaxElevation)
+        {
+          regions[i].MinElevation = regions[i - 1].MaxElevation;
+        }
+        
+        if (regions[i].MaxElevation < regions[i].MinElevation)
+        {
+          regions[i].MaxElevation = regions[i].MinElevation;
         }
       }
     }
