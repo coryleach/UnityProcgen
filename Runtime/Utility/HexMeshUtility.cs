@@ -21,6 +21,7 @@ namespace Gameframe.Procgen
     public List<Vector3> vertices;
     public List<int> triangles;
     public List<Color> colors;
+    public List<Vector2> uv;
     public Vector3[] corners;
 
     private float border = 0.25f;
@@ -41,6 +42,7 @@ namespace Gameframe.Procgen
       vertices = new List<Vector3>(); 
       triangles = new List<int>();
       colors = new List<Color>();
+      uv = new List<Vector2>();
       corners = new [] {
         new Vector3(0f, 0f, outerRadius),
         new Vector3(innerRadius, 0f, 0.5f * outerRadius),
@@ -83,6 +85,7 @@ namespace Gameframe.Procgen
       mesh.vertices = vertices.ToArray();
       mesh.triangles = triangles.ToArray();
       mesh.colors = colors.ToArray();
+      mesh.uv = uv.ToArray();
       mesh.RecalculateNormals();
       return mesh;
     }
@@ -163,9 +166,9 @@ namespace Gameframe.Procgen
       return y * mapWidth + x;
     }
     
-    public static Mesh GenerateHexagonMesh(float radius, int startX, int startY, int chunkWidth, int chunkHeight, int mapWidth, int mapHeight, float[] heightMap, Func<float,Color> colorFunction, Func<float,float> elevationFunction)
+    public static Mesh GenerateHexagonMesh(float radius, float border, int startX, int startY, int chunkWidth, int chunkHeight, int mapWidth, int mapHeight, float[] heightMap, Func<float,Color> colorFunction, Func<float,float> elevationFunction)
     {
-      var meshData = new HexMeshData(radius, 0.3f);
+      var meshData = new HexMeshData(radius, border);
 
       for (int dy = 0; dy < chunkHeight && (startY + dy) < mapHeight; dy++)
       {
@@ -207,7 +210,8 @@ namespace Gameframe.Procgen
             center.y = elevation;
             
             var color = colorFunction?.Invoke(heightMap[index]) ?? Color.white;
-            AddTriangle(meshData, center, neighborElevation, previousNeighborElevation, nextNeighborElevation, (HexDirection)direction, color);
+            var uv = new Vector2(x / (float)mapWidth, y / (float)mapHeight);
+            AddTriangle(meshData, center, uv, neighborElevation, previousNeighborElevation, nextNeighborElevation, (HexDirection)direction, color);
           }
 
         }
@@ -216,33 +220,33 @@ namespace Gameframe.Procgen
       return meshData.CreateMesh();
     }
 
-    private static void AddTriangle(HexMeshData meshData, Vector3 center, float neighborElevation, float previousElevation, float nextElevation, HexDirection direction, Color color)
+    private static void AddTriangle(HexMeshData meshData, Vector3 center, Vector3 uv, float neighborElevation, float previousElevation, float nextElevation, HexDirection direction, Color color)
     {
       var v1 = center;
       var v2 = center + meshData.GetFirstSolidCorner(direction);
       var v3 = center + meshData.GetSecondSolidCorner(direction);
       
       //Add inner solid triangle
-      AddTriangle(meshData, v1, v2, v3, color);
+      AddTriangle(meshData, v1, v2, v3, color, uv);
 
       //Add Quad To Fill Border Gap
       var v4 = v2 + meshData.GetBridge(direction);
       v4.y = neighborElevation;
       var v5 = v3 + meshData.GetBridge(direction);
       v5.y = neighborElevation;
-      AddQuad(meshData, v2, v3, v4, v5, color);
+      AddQuad(meshData, v2, v3, v4, v5, color, uv);
       
       //Add Triangles to fill gap on sides of quad
       var v6 = center + meshData.GetFirstCorner(direction);
       v6.y = Mathf.Min(neighborElevation,previousElevation);
-      AddTriangle(meshData,v2, v6, v4, color);
+      AddTriangle(meshData,v2, v6, v4, color, uv);
       
       var v7 = center + meshData.GetSecondCorner(direction);
       v7.y = Mathf.Min(neighborElevation,nextElevation);
-      AddTriangle(meshData,v3, v5, v7, color);
+      AddTriangle(meshData, v3, v5, v7, color, uv);
     }
 
-    private static void AddTriangle(HexMeshData meshData, Vector3 v1, Vector3 v2, Vector3 v3, Color color)
+    private static void AddTriangle(HexMeshData meshData, Vector3 v1, Vector3 v2, Vector3 v3, Color color, Vector3 uv)
     {
       var vertexIndex = meshData.vertices.Count;
       
@@ -254,12 +258,16 @@ namespace Gameframe.Procgen
       meshData.colors.Add(color);
       meshData.colors.Add(color);
       
+      meshData.uv.Add(uv);
+      meshData.uv.Add(uv);
+      meshData.uv.Add(uv);
+
       meshData.triangles.Add(vertexIndex);
       meshData.triangles.Add(vertexIndex + 1);
       meshData.triangles.Add(vertexIndex + 2);
     }
     
-    private static void AddQuad(HexMeshData meshData, Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4, Color color)
+    private static void AddQuad(HexMeshData meshData, Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4, Color color, Vector3 uv)
     {
       var vertexIndex = meshData.vertices.Count;
       
@@ -273,6 +281,11 @@ namespace Gameframe.Procgen
       meshData.colors.Add(color);
       meshData.colors.Add(color);
 
+      meshData.uv.Add(uv);
+      meshData.uv.Add(uv);
+      meshData.uv.Add(uv);
+      meshData.uv.Add(uv);
+      
       meshData.triangles.Add(vertexIndex);
       meshData.triangles.Add(vertexIndex + 2);
       meshData.triangles.Add(vertexIndex + 1);

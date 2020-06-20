@@ -24,9 +24,19 @@ namespace Gameframe.Procgen
 
         [SerializeField] private bool scaleTexture = false;
         [SerializeField] private float textureScale = 2f;
+
+        private void Start()
+        {
+            //This is here just to show the enabled checkbox in the unity inspector
+        }
         
         public async void DisplayMap(WorldMapData worldMapData)
         {
+            if (!enabled)
+            {
+                return;
+            }
+            
             var heightMapLayer = worldMapData.GetLayer<HeightMapLayerData>();
             var regionMapLayer = worldMapData.GetLayer<RegionMapLayerData>();
 

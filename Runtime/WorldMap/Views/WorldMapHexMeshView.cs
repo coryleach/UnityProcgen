@@ -15,9 +15,11 @@ namespace Gameframe.Procgen
     [SerializeField] private int chunkHeight = 16;
     [SerializeField] private float heightScale = 1;
     [SerializeField] private bool smooth = false;
+
+    [SerializeField, Range(0,1f)] private float border = 0.25f;
     
     [SerializeField] private List<WorldMapViewChunk> chunkList = new List<WorldMapViewChunk>();
-    private Dictionary<Vector2, WorldMapViewChunk> _chunks = new Dictionary<Vector2, WorldMapViewChunk>();
+    private readonly Dictionary<Vector2, WorldMapViewChunk> _chunks = new Dictionary<Vector2, WorldMapViewChunk>();
 
     private void Start()
     {
@@ -53,7 +55,7 @@ namespace Gameframe.Procgen
           var startY = chunkY * chunkHeight;
           var chunkView = GetChunk(new Vector2Int(chunkX,chunkY));
           chunkView.transform.localPosition = new Vector3(0,0,0);
-          var mesh = HexMeshUtility.GenerateHexagonMesh(radius, startX, startY, chunkWidth, chunkHeight, mapData.width, mapData.height, heightMap, GetColor, GetElevation);
+          var mesh = HexMeshUtility.GenerateHexagonMesh(radius, border, startX, startY, chunkWidth, chunkHeight, mapData.width, mapData.height, heightMap, GetColor, GetElevation);
           chunkView.SetMesh(mesh);
         }
       }
@@ -102,7 +104,8 @@ namespace Gameframe.Procgen
       return chunk;
     }
     
-    private void ClearChunks()
+    [ContextMenu("Clear Chunks")]
+    public void ClearChunks()
     {
       foreach (var chunk in chunkList)
       {
