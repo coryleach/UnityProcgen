@@ -7,15 +7,23 @@ namespace Gameframe.Procgen
 {
   public class VoronoiVisualizer : MonoBehaviour
   {
-    public int seed = 0;
-    public Vector2Int imageSize;
-    public int regionAmount;
+    [SerializeField]
+    private int seed;
+    
+    [SerializeField]
+    private Vector2Int imageSize;
+    
+    [SerializeField]
+    private int regionAmount;
 
     [SerializeField]
     private MeshRenderer _renderer;
 
-    public bool UseMainTexture = true;
-    public string texturePropertyName = "_BaseMap";
+    [SerializeField]
+    private bool UseMainTexture = true;
+    
+    [SerializeField]
+    private string texturePropertyName = "_BaseMap";
     
     private void Start()
     {
