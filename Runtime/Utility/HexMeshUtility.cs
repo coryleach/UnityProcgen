@@ -38,7 +38,7 @@ namespace Gameframe.Procgen
       this.border = Mathf.Clamp01(border);
       
       outerRadius = radius;
-      innerRadius = outerRadius * Mathf.Sqrt(3f) * 0.5f;
+      innerRadius = HexMeshUtility.GetInnerRadius(outerRadius);
       vertices = new List<Vector3>(); 
       triangles = new List<int>();
       colors = new List<Color>();
@@ -94,6 +94,12 @@ namespace Gameframe.Procgen
   
   public static class HexMeshUtility
   {
+    //Calculates the inner radius from the outer radius
+    public static float GetInnerRadius(float outerRadius)
+    {
+      return outerRadius * Mathf.Sqrt(3f) * 0.5f;
+    }
+    
     public static HexDirection Previous(this HexDirection direction) 
     {
       return direction == HexDirection.NE ? HexDirection.NW : (direction - 1);
