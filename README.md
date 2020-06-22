@@ -2,7 +2,7 @@
 
 <!-- BADGE-START -->
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/coryleach/UnityProcgen?include_prereleases)
-[![license](https://img.shields.io/github/license/coryleach/UnityGiphy)](https://github.com/coryleach/UnityProcgen/blob/master/LICENSE)
+[![license](https://img.shields.io/github/license/coryleach/UnityProcgen)](https://github.com/coryleach/UnityProcgen/blob/master/LICENSE)
 
 [![twitter](https://img.shields.io/twitter/follow/coryleach.svg?style=social)](https://twitter.com/coryleach)
 <!-- BADGE-END -->
