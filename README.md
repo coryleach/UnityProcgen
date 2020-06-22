@@ -1,10 +1,11 @@
 <h1 align="center">Gameframe.Procgen 👋</h1>
-<p>
-  <img alt="Version" src="https://img.shields.io/badge/version-0.0.4-blue.svg?cacheSeconds=2592000" />
-  <a href="https://twitter.com/Cory Leach">
-    <img alt="Twitter: coryleach" src="https://img.shields.io/twitter/follow/coryleach.svg?style=social" target="_blank" />
-  </a>
-</p>
+
+<!-- BADGE-START -->
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/coryleach/UnityProcgen?include_prereleases)
+[![license](https://img.shields.io/github/license/coryleach/UnityGiphy)](https://github.com/coryleach/UnityProcgen/blob/master/LICENSE)
+
+[![twitter](https://img.shields.io/twitter/follow/coryleach.svg?style=social)](https://twitter.com/coryleach)
+<!-- BADGE-END -->
 
 Library of utilitities for procedural generation
 
