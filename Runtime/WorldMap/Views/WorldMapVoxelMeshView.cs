@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Gameframe.Procgen
 {
-  public class WorldMapVoxelMeshView : MonoBehaviour, IWorldMapView
+  public class WorldMapVoxelMeshView : WorldMapView, IWorldMapView
   {
     [SerializeField] private TerrainTable _terrainTable;
 
@@ -36,7 +36,7 @@ namespace Gameframe.Procgen
       ClearChunks();
     }
 
-    public void DisplayMap(WorldMapData mapData)
+    public override void DisplayMap(WorldMapData mapData)
     {
       if (!enabled)
       {

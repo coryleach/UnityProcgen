@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Gameframe.Procgen
 {
-    public class WoldMapTerrainMeshView : MonoBehaviour, IWorldMapView
+    public class WoldMapTerrainMeshView : WorldMapView, IWorldMapView
     {
         [SerializeField] private MeshFilter _meshFilter = null;
 
@@ -24,7 +24,7 @@ namespace Gameframe.Procgen
         {
         }
 
-        public void DisplayMap(WorldMapData worldMapData)
+        public override void DisplayMap(WorldMapData worldMapData)
         {
             if (!enabled)
             {

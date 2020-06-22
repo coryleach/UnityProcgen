@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Gameframe.Procgen
 {
   
-  public class WorldMapHexMeshView : MonoBehaviour, IWorldMapView
+  public class WorldMapHexMeshView : WorldMapView, IWorldMapView
   {
     [SerializeField] private WorldMapViewChunk _prefab = null;
     [SerializeField] private float radius = 1f;
@@ -21,6 +21,9 @@ namespace Gameframe.Procgen
     [SerializeField] private List<WorldMapViewChunk> chunkList = new List<WorldMapViewChunk>();
     private readonly Dictionary<Vector2, WorldMapViewChunk> _chunks = new Dictionary<Vector2, WorldMapViewChunk>();
 
+    private WorldMapData _mapData = null;
+    private float[] _heightMap = null;
+
     private void Start()
     {
       //This is here just to show the enable checkbox in editor
@@ -30,15 +33,29 @@ namespace Gameframe.Procgen
     {
       ClearChunks();
     }
-    
-    public void DisplayMap(WorldMapData mapData)
+
+    public override Vector3 MapToWorldPosition(Vector2Int point)
+    {
+      var innerRadius = HexMeshUtility.GetInnerRadius(radius);
+      var xOffset = point.x + point.y * 0.5f - (int)(point.y / 2);
+      var pt = new Vector3
+      {
+        x = xOffset * innerRadius * 2,
+        y = _mapData == null || _heightMap == null ? 0 : GetElevation(_heightMap[point.y * _mapData.width + point.x]),
+        z = point.y * radius * 1.5f
+      };
+      return pt;
+    }
+
+    public override void DisplayMap(WorldMapData mapData)
     {
       if (!enabled)
       {
         return;
       }
-      
-      var heightMap = mapData.GetLayer<HeightMapLayerData>().heightMap;
+
+      _mapData = mapData;
+      _heightMap = _mapData.GetLayer<HeightMapLayerData>().heightMap;
       
       ClearChunks();
       
@@ -55,7 +72,7 @@ namespace Gameframe.Procgen
           var startY = chunkY * chunkHeight;
           var chunkView = GetChunk(new Vector2Int(chunkX,chunkY));
           chunkView.transform.localPosition = new Vector3(0,0,0);
-          var mesh = HexMeshUtility.GenerateHexagonMesh(radius, border, startX, startY, chunkWidth, chunkHeight, mapData.width, mapData.height, heightMap, GetColor, GetElevation);
+          var mesh = HexMeshUtility.GenerateHexagonMesh(radius, border, startX, startY, chunkWidth, chunkHeight, mapData.width, mapData.height, _heightMap, GetColor, GetElevation);
           chunkView.SetMesh(mesh);
         }
       }

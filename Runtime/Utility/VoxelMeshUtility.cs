@@ -145,21 +145,21 @@ namespace Gameframe.Procgen
 
     public class VoxelMeshData
     {
-        private List<Vector3> vertices = new List<Vector3>();
-        private List<Vector2> uv = new List<Vector2>();
-        private List<int> triangles = new List<int>();
+        private readonly List<Vector3> _vertices = new List<Vector3>();
+        private readonly List<Vector2> _uv = new List<Vector2>();
+        private readonly List<int> _triangles = new List<int>();
 
-        private int width;
-        private int height;
-        private int quadCount;
-        private Vector2Int offset;
+        private readonly int _width;
+        private readonly int _height;
+        private int _quadCount;
+        private readonly Vector2Int _offset;
 
         public VoxelMeshData(int width, int height, Vector2Int offset)
         {
-            this.width = width;
-            this.height = height;
-            this.offset = offset;
-            quadCount = 0;
+            _width = width;
+            _height = height;
+            _offset = offset;
+            _quadCount = 0;
         }
 
         /// <summary>
@@ -177,10 +177,10 @@ namespace Gameframe.Procgen
             var topRight = new Vector3(x + 1, elevation, y + 1);
             var bottomRight = new Vector3(x + 1, elevation, y);
 
-            vertices.Add(bottomLeft);
-            vertices.Add(topLeft);
-            vertices.Add(topRight);
-            vertices.Add(bottomRight);
+            _vertices.Add(bottomLeft);
+            _vertices.Add(topLeft);
+            _vertices.Add(topRight);
+            _vertices.Add(bottomRight);
 
             AddUV(x, y);
             AddTriangles();
@@ -201,10 +201,10 @@ namespace Gameframe.Procgen
             var topRight = new Vector3(x, elevation, y);
             var bottomRight = new Vector3(x, elevation - depth, y);
 
-            vertices.Add(bottomLeft);
-            vertices.Add(topLeft);
-            vertices.Add(topRight);
-            vertices.Add(bottomRight);
+            _vertices.Add(bottomLeft);
+            _vertices.Add(topLeft);
+            _vertices.Add(topRight);
+            _vertices.Add(bottomRight);
 
             AddUV(x, y);
             AddTriangles();
@@ -225,10 +225,10 @@ namespace Gameframe.Procgen
             var topRight = new Vector3(x + 1, elevation, y + 1);
             var bottomRight = new Vector3(x + 1, elevation - depth, y + 1);
 
-            vertices.Add(bottomLeft);
-            vertices.Add(topLeft);
-            vertices.Add(topRight);
-            vertices.Add(bottomRight);
+            _vertices.Add(bottomLeft);
+            _vertices.Add(topLeft);
+            _vertices.Add(topRight);
+            _vertices.Add(bottomRight);
 
             AddUV(x, y);
             AddTriangles();
@@ -249,10 +249,10 @@ namespace Gameframe.Procgen
             var topRight = new Vector3(x + 1, elevation, y);
             var bottomRight = new Vector3(x + 1, elevation - depth, y);
 
-            vertices.Add(bottomLeft);
-            vertices.Add(topLeft);
-            vertices.Add(topRight);
-            vertices.Add(bottomRight);
+            _vertices.Add(bottomLeft);
+            _vertices.Add(topLeft);
+            _vertices.Add(topRight);
+            _vertices.Add(bottomRight);
 
             AddUV(x, y);
             AddTriangles();
@@ -273,10 +273,10 @@ namespace Gameframe.Procgen
             var topRight = new Vector3(x, elevation, y + 1);
             var bottomRight = new Vector3(x, elevation - depth, y + 1);
 
-            vertices.Add(bottomLeft);
-            vertices.Add(topLeft);
-            vertices.Add(topRight);
-            vertices.Add(bottomRight);
+            _vertices.Add(bottomLeft);
+            _vertices.Add(topLeft);
+            _vertices.Add(topRight);
+            _vertices.Add(bottomRight);
 
             AddUV(x, y);
             AddTriangles();
@@ -291,15 +291,15 @@ namespace Gameframe.Procgen
         private void AddUV(int x, int y, float padding = 0.1f)
         {
             //We need to add the offset so UVs are shifted to correct texture chunk
-            var uvBottomLeft = new Vector2((x + offset.x + padding) / width, (y + offset.y + padding) / height);
-            var uvTopLeft = new Vector2((x + offset.x + padding) / width, (y + offset.y + 1 - padding) / height);
-            var uvTopRight = new Vector2((x + offset.x + 1 - padding) / width, (y + offset.y + 1 - padding) / height);
-            var uvBottomRight = new Vector2((x + offset.x + 1 - padding) / width, (y + offset.y + padding) / height);
+            var uvBottomLeft = new Vector2((x + _offset.x + padding) / _width, (y + _offset.y + padding) / _height);
+            var uvTopLeft = new Vector2((x + _offset.x + padding) / _width, (y + _offset.y + 1 - padding) / _height);
+            var uvTopRight = new Vector2((x + _offset.x + 1 - padding) / _width, (y + _offset.y + 1 - padding) / _height);
+            var uvBottomRight = new Vector2((x + _offset.x + 1 - padding) / _width, (y + _offset.y + padding) / _height);
 
-            uv.Add(uvBottomLeft);
-            uv.Add(uvTopLeft);
-            uv.Add(uvTopRight);
-            uv.Add(uvBottomRight);
+            _uv.Add(uvBottomLeft);
+            _uv.Add(uvTopLeft);
+            _uv.Add(uvTopRight);
+            _uv.Add(uvBottomRight);
         }
 
         /// <summary>
@@ -307,17 +307,17 @@ namespace Gameframe.Procgen
         /// </summary>
         private void AddTriangles()
         {
-            int triangleIndex = quadCount * 4;
+            int triangleIndex = _quadCount * 4;
 
-            triangles.Add(triangleIndex + 0);
-            triangles.Add(triangleIndex + 1);
-            triangles.Add(triangleIndex + 2);
+            _triangles.Add(triangleIndex + 0);
+            _triangles.Add(triangleIndex + 1);
+            _triangles.Add(triangleIndex + 2);
 
-            triangles.Add(triangleIndex + 0);
-            triangles.Add(triangleIndex + 2);
-            triangles.Add(triangleIndex + 3);
+            _triangles.Add(triangleIndex + 0);
+            _triangles.Add(triangleIndex + 2);
+            _triangles.Add(triangleIndex + 3);
 
-            quadCount++;
+            _quadCount++;
         }
 
 
@@ -325,9 +325,9 @@ namespace Gameframe.Procgen
         {
             var mesh = new Mesh
             {
-                vertices = vertices.ToArray(),
-                triangles = triangles.ToArray(),
-                uv = uv.ToArray()
+                vertices = _vertices.ToArray(),
+                triangles = _triangles.ToArray(),
+                uv = _uv.ToArray()
             };
             mesh.RecalculateNormals();
             return mesh;

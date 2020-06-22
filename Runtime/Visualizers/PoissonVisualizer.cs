@@ -6,12 +6,20 @@ namespace Gameframe.Procgen
 {
   public class PoissonVisualizer : MonoBehaviour
   {
-    public int seed = 0;
-    public Vector2Int imageSize;
-    public float radius = 1f;
-    public int maxSamplesPerPoint = 100;
+    [SerializeField]
+    private int seed;
+    
+    [SerializeField]
+    private Vector2Int imageSize;
+    
+    [SerializeField]
+    private float radius = 1f;
+    
+    [SerializeField]
+    private int maxSamplesPerPoint = 100;
 
-    [SerializeField] private MeshRenderer _renderer;
+    [SerializeField] 
+    private MeshRenderer _renderer;
 
     private void Start()
     {

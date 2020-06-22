@@ -5,10 +5,17 @@ namespace Gameframe.Procgen
   [CreateAssetMenu(menuName = "Gameframe/Procgen/Layers/PoissonMapLayerGenerator")]
   public class PoissonMapLayerGenerator : WorldMapLayerGenerator
   {
-    public float radius = 10;
-    public int maxSamplesPerPoint = 30;
-    public bool useRegions = true;
-    public int edgeAvoidance = 0;
+    [SerializeField]
+    private float radius = 10;
+    
+    [SerializeField]
+    private int maxSamplesPerPoint = 30;
+    
+    [SerializeField]
+    private bool useRegions = true;
+    
+    [SerializeField]
+    private int edgeAvoidance;
 
     public override void AddToWorld(WorldMapData mapData)
     {

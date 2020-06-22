@@ -16,18 +16,29 @@ namespace Gameframe.Procgen
 
   public class HexMeshData
   {
-    public float outerRadius;
-    public float innerRadius;
-    public List<Vector3> vertices;
-    public List<int> triangles;
-    public List<Color> colors;
-    public List<Vector2> uv;
-    public Vector3[] corners;
-
-    private float border = 0.25f;
+    private readonly float _outerRadius;
+    private readonly float _innerRadius;
+    private readonly List<Vector3> _vertices;
+    private readonly List<int> _triangles;
+    private readonly List<Color> _colors;
+    private readonly List<Vector2> _uv;
+    private readonly Vector3[] _corners;
+    private readonly float _border = 0.25f;
     
-    public float Border => border;
-    public float Solid => 1 - border;
+    public float Border => _border;
+    public float Solid => 1 - _border;
+
+    public float OuterRadius => _outerRadius;
+
+    public float InnerRadius => _innerRadius;
+
+    public List<Vector3> Vertices => _vertices;
+
+    public List<int> Triangles => _triangles;
+
+    public List<Color> Colors => _colors;
+
+    public List<Vector2> Uv => _uv;
 
     public HexMeshData()
     {
@@ -35,57 +46,59 @@ namespace Gameframe.Procgen
 
     public HexMeshData(float radius, float border = 0.2f)
     {
-      this.border = Mathf.Clamp01(border);
+      this._border = Mathf.Clamp01(border);
       
-      outerRadius = radius;
-      innerRadius = outerRadius * Mathf.Sqrt(3f) * 0.5f;
-      vertices = new List<Vector3>(); 
-      triangles = new List<int>();
-      colors = new List<Color>();
-      uv = new List<Vector2>();
-      corners = new [] {
-        new Vector3(0f, 0f, outerRadius),
-        new Vector3(innerRadius, 0f, 0.5f * outerRadius),
-        new Vector3(innerRadius, 0f, -0.5f * outerRadius),
-        new Vector3(0f, 0f, -outerRadius),
-        new Vector3(-innerRadius, 0f, -0.5f * outerRadius),
-        new Vector3(-innerRadius, 0f, 0.5f * outerRadius),
-        new Vector3(0f, 0f, outerRadius)
+      _outerRadius = radius;
+      _innerRadius = HexMeshUtility.GetInnerRadius(_outerRadius);
+      _vertices = new List<Vector3>(); 
+      _triangles = new List<int>();
+      _colors = new List<Color>();
+      _uv = new List<Vector2>();
+      _corners = new [] {
+        new Vector3(0f, 0f, _outerRadius),
+        new Vector3(_innerRadius, 0f, 0.5f * _outerRadius),
+        new Vector3(_innerRadius, 0f, -0.5f * _outerRadius),
+        new Vector3(0f, 0f, -_outerRadius),
+        new Vector3(-_innerRadius, 0f, -0.5f * _outerRadius),
+        new Vector3(-_innerRadius, 0f, 0.5f * _outerRadius),
+        new Vector3(0f, 0f, _outerRadius)
       };
     }
     
     public Vector3 GetBridge(HexDirection direction) 
     {
-      return (corners[(int)direction] + corners[(int)direction + 1]) * 0.5f * border;
+      return (_corners[(int)direction] + _corners[(int)direction + 1]) * 0.5f * _border;
     }
     
     public Vector3 GetFirstCorner(HexDirection direction)
     {
-      return corners[(int) direction];
+      return _corners[(int) direction];
     }
 
     public Vector3 GetSecondCorner(HexDirection direction)
     {
-      return corners[(int) direction + 1];
+      return _corners[(int) direction + 1];
     }
     
     public Vector3 GetFirstSolidCorner(HexDirection direction)
     {
-      return corners[(int) direction] * Solid;
+      return _corners[(int) direction] * Solid;
     }
 
     public Vector3 GetSecondSolidCorner(HexDirection direction)
     {
-      return corners[(int) direction + 1] * Solid;
+      return _corners[(int) direction + 1] * Solid;
     }
 
     public Mesh CreateMesh()
     {
-      Mesh mesh = new Mesh();
-      mesh.vertices = vertices.ToArray();
-      mesh.triangles = triangles.ToArray();
-      mesh.colors = colors.ToArray();
-      mesh.uv = uv.ToArray();
+      var mesh = new Mesh
+      {
+        vertices = _vertices.ToArray(), 
+        triangles = _triangles.ToArray(), 
+        colors = _colors.ToArray(), 
+        uv = _uv.ToArray()
+      };
       mesh.RecalculateNormals();
       return mesh;
     }
@@ -94,6 +107,12 @@ namespace Gameframe.Procgen
   
   public static class HexMeshUtility
   {
+    //Calculates the inner radius from the outer radius
+    public static float GetInnerRadius(float outerRadius)
+    {
+      return outerRadius * Mathf.Sqrt(3f) * 0.5f;
+    }
+    
     public static HexDirection Previous(this HexDirection direction) 
     {
       return direction == HexDirection.NE ? HexDirection.NW : (direction - 1);
@@ -180,7 +199,7 @@ namespace Gameframe.Procgen
           var index = (y * mapWidth) + x;
           
           var xOffset = x + y * 0.5f - (int)(y / 2);
-          var center = new Vector3(xOffset*meshData.innerRadius*2,0,y*meshData.outerRadius*1.5f);
+          var center = new Vector3(xOffset*meshData.InnerRadius*2,0,y*meshData.OuterRadius*1.5f);
           
           for (var direction = 0; direction < 6; direction++)
           {
@@ -248,51 +267,51 @@ namespace Gameframe.Procgen
 
     private static void AddTriangle(HexMeshData meshData, Vector3 v1, Vector3 v2, Vector3 v3, Color color, Vector3 uv)
     {
-      var vertexIndex = meshData.vertices.Count;
+      var vertexIndex = meshData.Vertices.Count;
       
-      meshData.vertices.Add(v1);
-      meshData.vertices.Add(v2);
-      meshData.vertices.Add(v3);
+      meshData.Vertices.Add(v1);
+      meshData.Vertices.Add(v2);
+      meshData.Vertices.Add(v3);
       
-      meshData.colors.Add(color);
-      meshData.colors.Add(color);
-      meshData.colors.Add(color);
+      meshData.Colors.Add(color);
+      meshData.Colors.Add(color);
+      meshData.Colors.Add(color);
       
-      meshData.uv.Add(uv);
-      meshData.uv.Add(uv);
-      meshData.uv.Add(uv);
+      meshData.Uv.Add(uv);
+      meshData.Uv.Add(uv);
+      meshData.Uv.Add(uv);
 
-      meshData.triangles.Add(vertexIndex);
-      meshData.triangles.Add(vertexIndex + 1);
-      meshData.triangles.Add(vertexIndex + 2);
+      meshData.Triangles.Add(vertexIndex);
+      meshData.Triangles.Add(vertexIndex + 1);
+      meshData.Triangles.Add(vertexIndex + 2);
     }
     
     private static void AddQuad(HexMeshData meshData, Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4, Color color, Vector3 uv)
     {
-      var vertexIndex = meshData.vertices.Count;
+      var vertexIndex = meshData.Vertices.Count;
       
-      meshData.vertices.Add(v1);
-      meshData.vertices.Add(v2);
-      meshData.vertices.Add(v3);
-      meshData.vertices.Add(v4);
+      meshData.Vertices.Add(v1);
+      meshData.Vertices.Add(v2);
+      meshData.Vertices.Add(v3);
+      meshData.Vertices.Add(v4);
       
-      meshData.colors.Add(color);
-      meshData.colors.Add(color);
-      meshData.colors.Add(color);
-      meshData.colors.Add(color);
+      meshData.Colors.Add(color);
+      meshData.Colors.Add(color);
+      meshData.Colors.Add(color);
+      meshData.Colors.Add(color);
 
-      meshData.uv.Add(uv);
-      meshData.uv.Add(uv);
-      meshData.uv.Add(uv);
-      meshData.uv.Add(uv);
+      meshData.Uv.Add(uv);
+      meshData.Uv.Add(uv);
+      meshData.Uv.Add(uv);
+      meshData.Uv.Add(uv);
       
-      meshData.triangles.Add(vertexIndex);
-      meshData.triangles.Add(vertexIndex + 2);
-      meshData.triangles.Add(vertexIndex + 1);
+      meshData.Triangles.Add(vertexIndex);
+      meshData.Triangles.Add(vertexIndex + 2);
+      meshData.Triangles.Add(vertexIndex + 1);
       
-      meshData.triangles.Add(vertexIndex + 1);
-      meshData.triangles.Add(vertexIndex + 2);
-      meshData.triangles.Add(vertexIndex + 3);
+      meshData.Triangles.Add(vertexIndex + 1);
+      meshData.Triangles.Add(vertexIndex + 2);
+      meshData.Triangles.Add(vertexIndex + 3);
     }
     
   }
