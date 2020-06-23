@@ -1,8 +1,11 @@
+<p align="center">
+<img align="center" src="https://raw.githubusercontent.com/coryleach/UnityPackages/master/Documentation/GameframeFace.gif" />
+</p>
 <h1 align="center">Gameframe.Procgen 👋</h1>
 
 <!-- BADGE-START -->
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/coryleach/UnityProcgen?include_prereleases)
-[![license](https://img.shields.io/github/license/coryleach/UnityGiphy)](https://github.com/coryleach/UnityProcgen/blob/master/LICENSE)
+[![license](https://img.shields.io/github/license/coryleach/UnityProcgen)](https://github.com/coryleach/UnityProcgen/blob/master/LICENSE)
 
 [![twitter](https://img.shields.io/twitter/follow/coryleach.svg?style=social)](https://twitter.com/coryleach)
 <!-- BADGE-END -->
@@ -14,7 +17,7 @@ Library of utilitities for procedural generation
 #### Using UnityPackageManager (for Unity 2019.3 or later)
 Open the package manager window (menu: Window > Package Manager)<br/>
 Select "Add package from git URL...", fill in the pop-up with the following link:<br/>
-https://github.com/coryleach/UnityProcgen.git#0.0.4<br/>
+https://github.com/coryleach/UnityProcgen.git#0.0.5<br/>
 
 #### Using UnityPackageManager (for Unity 2019.1 or later)
 
@@ -22,7 +25,7 @@ Find the manifest.json file in the Packages folder of your project and edit it t
 ```js
 {
   "dependencies": {
-    "com.gameframe.procgen": "https://github.com/coryleach/UnityProcgen.git#0.0.4",
+    "com.gameframe.procgen": "https://github.com/coryleach/UnityProcgen.git#0.0.5",
     ...
   },
 }
