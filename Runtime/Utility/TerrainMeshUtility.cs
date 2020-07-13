@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEditor.SceneManagement;
+using System;
 using UnityEngine;
 
 namespace Gameframe.Procgen
