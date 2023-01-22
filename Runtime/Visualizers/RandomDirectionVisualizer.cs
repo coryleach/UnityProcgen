@@ -1,11 +1,10 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Gameframe.Procgen
 {
+    /// <summary>
+    /// This component was written to test the NoiseRng's random direction for uniform distribution
+    /// </summary>
     public class RandomDirectionVisualizer : MonoBehaviour
     {
         public DirectionDimensions dimensions = DirectionDimensions.Dir3D;
