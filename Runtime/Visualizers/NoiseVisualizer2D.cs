@@ -17,8 +17,9 @@ namespace Gameframe.Procgen
 
         [SerializeField] private uint seed = 100;
         [SerializeField] private float frequency = 1;
-        [SerializeField] private float scale = 1;
-        [SerializeField] private float offset = 0;
+        [SerializeField] [Range(1, 8)] private int octaves = 1;
+        [SerializeField] private float lacunarity = 2f;
+        [SerializeField] private float persistence = 0.5f;
 
         [SerializeField] private FilterMode filterMode = FilterMode.Point;
 
@@ -112,13 +113,13 @@ namespace Gameframe.Procgen
                             v = _noiseGenerator.Value3D(point.x, point.y, point.z);
                             break;
                         case Dimension.Perlin1D:
-                            v = PerlinGradientNoise.Noise1D(point.x*frequency, seed);
+                            v = PerlinGradientNoise.Fractal1D(point.x, seed, frequency, octaves, lacunarity, persistence);
                             break;
                         case Dimension.Perlin2D:
-                            v = PerlinGradientNoise.Noise2D(point.x*frequency, point.y*frequency, seed);
+                            v = PerlinGradientNoise.Fractal2D(point.x, point.y, seed, frequency, octaves, lacunarity, persistence);
                             break;
                         case Dimension.Perlin3D:
-                            v = PerlinGradientNoise.Noise3D(point.x*frequency, point.y*frequency, point.z*frequency, seed);
+                            v = PerlinGradientNoise.Fractal3D(point.x, point.y, point.z, seed, frequency, octaves, lacunarity, persistence);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
