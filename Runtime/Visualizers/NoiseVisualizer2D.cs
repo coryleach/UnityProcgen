@@ -8,9 +8,6 @@ namespace Gameframe.Procgen
     public class NoiseVisualizer2D : MonoBehaviour
     {
         [SerializeField]
-        private NoiseGenerator _noiseGenerator;
-
-        [SerializeField]
         private Renderer _renderer;
 
         [SerializeField] private int textureResolution = 256;
@@ -64,11 +61,6 @@ namespace Gameframe.Procgen
         [ContextMenu("Generate")]
         private void Generate()
         {
-            if (_noiseGenerator == null)
-            {
-                return;
-            }
-
             if (_texture != null && (_texture.width != textureResolution || _texture.height != textureResolution))
             {
                 ClearTexture();
@@ -80,9 +72,6 @@ namespace Gameframe.Procgen
             }
 
             _texture.filterMode = filterMode;
-
-            _noiseGenerator.Seed = seed;
-            _noiseGenerator.Frequency = frequency;
 
             var point00 = transform.TransformPoint(new Vector3(-0.5f,-0.5f));
             var point10 = transform.TransformPoint(new Vector3( 0.5f,-0.5f));
@@ -104,13 +93,13 @@ namespace Gameframe.Procgen
                     switch (dimension)
                     {
                         case Dimension.Value1D:
-                            v = _noiseGenerator.Value1D(point.x);
+                            v = ValueNoise.Fractal1D(point.x * frequency, seed, frequency, octaves, lacunarity, persistence);
                             break;
                         case Dimension.Value2D:
-                            v = _noiseGenerator.Value2D(point.x, point.y);
+                            v = ValueNoise.Fractal2D(point * frequency, seed, frequency, octaves, lacunarity, persistence);
                             break;
                         case Dimension.Value3D:
-                            v = _noiseGenerator.Value3D(point.x, point.y, point.z);
+                            v = ValueNoise.Fractal3D(point * frequency, seed, frequency, octaves, lacunarity, persistence);
                             break;
                         case Dimension.Perlin1D:
                             v = PerlinGradientNoise.Fractal1D(point.x, seed, frequency, octaves, lacunarity, persistence);
