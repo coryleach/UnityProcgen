@@ -28,5 +28,10 @@ namespace Gameframe.Procgen
         {
             return t * t * t * (t * (t * 6f - 15f) + 10f);
         }
+
+        public static float Degree5Derivative(float t)
+        {
+            return 30f * t * t * (t * (t - 2f) + 1f);
+        }
     }
 }

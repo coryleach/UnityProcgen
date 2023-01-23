@@ -143,6 +143,36 @@ namespace Gameframe.Procgen
             return Mathf.Lerp(v0, v1, t);
         }
 
+        public static NoiseSample Sample1D(float x, uint seed, float frequency = 1)
+        {
+            var x0 = Mathf.FloorToInt(x * frequency);
+            var x1 = x0 + 1;
+
+            var t = Smooth(x - x0);
+            var dt = SmoothDerivative(x - x0);
+
+            var v0 = SquirrelEiserloh.Get1dNoiseZeroToOne(x0, seed);
+            var v1 = SquirrelEiserloh.Get1dNoiseZeroToOne(x1, seed);
+
+            var a = v0;
+            var b = v1 - v0;
+            var v = a + b * t; //Lerp
+            var dv = b * dt; //Lerp Derivative
+
+            var sample = new NoiseSample
+            {
+                value = v,
+            };
+
+            sample.derivative.x = dv;
+            sample.derivative.y = 0;
+            sample.derivative.z = 0;
+
+            sample.derivative *= frequency;
+
+            return sample;
+        }
+
         public static float Noise2D(float x, float y, uint seed)
         {
             var x0 = Mathf.FloorToInt(x);
@@ -163,6 +193,49 @@ namespace Gameframe.Procgen
             var edge2 = Mathf.Lerp(v01, v11, tx);
 
             return Mathf.Lerp(edge1, edge2, ty);
+        }
+
+        public static NoiseSample Sample2D(float x, float y, uint seed, float frequency = 1f)
+        {
+            x *= frequency;
+            y *= frequency;
+
+            var x0 = Mathf.FloorToInt(x);
+            var y0 = Mathf.FloorToInt(y);
+            var x1 = x0 + 1;
+            var y1 = y0 + 1;
+
+            var tx = Smooth(x - x0);
+            var ty = Smooth(y - y0);
+
+            var dtx = SmoothDerivative(x - x0);
+            var dty = SmoothDerivative(y - y0);
+
+            var v00 = SquirrelEiserloh.Get2dNoiseZeroToOne(x0, y0, seed);
+            var v01 = SquirrelEiserloh.Get2dNoiseZeroToOne(x0, y1, seed);
+
+            var v10 = SquirrelEiserloh.Get2dNoiseZeroToOne(x1, y0, seed);
+            var v11 = SquirrelEiserloh.Get2dNoiseZeroToOne(x1, y1, seed);
+
+            var a = v00;
+            var b = v10 - v00;
+            var c = v01 - v00;
+            var d = v11 - v01 - v10 + v00;
+
+            var v = a + b * tx + (c + d * tx) * ty;
+
+            var sample = new NoiseSample
+            {
+                value = v
+            };
+
+            sample.derivative.x = (b + d * ty) * dtx;
+            sample.derivative.y = (c + d * tx) * dty;
+            sample.derivative.z = 0;
+
+            sample.derivative *= frequency;
+
+            return sample;
         }
 
         public static float Noise2D(Vector2 v, uint seed)
@@ -218,6 +291,11 @@ namespace Gameframe.Procgen
         private static float Smooth(float t)
         {
             return SmoothStep.Degree5(t);
+        }
+
+        private static float SmoothDerivative(float t)
+        {
+            return SmoothStep.Degree5Derivative(t);
         }
     }
 }

@@ -197,6 +197,44 @@ namespace Gameframe.Procgen
             return v * 0.5f + 0.5f; //Remap from -1 to 1, to 0 to 1
         }
 
+        public static NoiseSample Sample1D(float x, uint seed, float frequency = 1)
+        {
+            var x0 = Mathf.FloorToInt(x * frequency);
+            var x1 = x0 + 1;
+
+            var t0 = x - x0;
+            var t1 = t0 - 1f;
+
+            var g0 = HashToGradient1D(Hash1D(x0, seed));
+            var g1 = HashToGradient1D(Hash1D(x1, seed));
+
+            var v0 = g0 * t0;
+            var v1 = g1 * t1;
+
+            var t = Smooth(t0);
+            var dt = SmoothDerivative(t0);
+
+            var a = v0;
+            var b = v1 - v0;
+
+            var v = a + b * t;
+            var dv = b * t;
+
+            var sample = new NoiseSample
+            {
+                value = v * 2f,
+            };
+
+            sample.derivative.x = dv;
+            sample.derivative.y = 0;
+            sample.derivative.z = 0;
+
+            sample.derivative *= frequency;
+
+            return sample;
+        }
+
+
         /// <summary>
         /// 2 dimensional perlin noise
         /// </summary>
@@ -236,6 +274,52 @@ namespace Gameframe.Procgen
             var v = Mathf.Lerp(v0, v1, ty) * Sqr2;
             return v * 0.5f + 0.5f; //Remap from -1 to 1, to 0 to 1
         }
+
+        public static NoiseSample Sample2D(float x, float y, uint seed, float frequency = 1f)
+        {
+            x *= frequency;
+            y *= frequency;
+
+            var x0 = Mathf.FloorToInt(x);
+            var x1 = x0 + 1;
+
+            var y0 = Mathf.FloorToInt(y);
+            var y1 = y0 + 1;
+
+            var tx0 = x - x0;
+            var tx1 = tx0 - 1f;
+
+            var ty0 = y - y0;
+            var ty1 = ty0 - 1f;
+
+            var g00 = HashToGradient2D(Hash2D(x0, y0, seed));
+            var g10 = HashToGradient2D(Hash2D(x1, y0, seed));
+            var g01 = HashToGradient2D(Hash2D(x0, y1, seed));
+            var g11 = HashToGradient2D(Hash2D(x1, y1, seed));
+
+            var v00 = Dot2D(g00, tx0, ty0);
+            var v10 = Dot2D(g10, tx1, ty0);
+            var v01 = Dot2D(g01, tx0, ty1);
+            var v11 = Dot2D(g11, tx1, ty1);
+
+            var tx = Smooth(tx0);
+            var ty = Smooth(ty0);
+
+            var a = v00;
+            var b = v10 - v00;
+
+            var v0 = Mathf.Lerp(v00, v10, tx);
+            var v1 = Mathf.Lerp(v01, v11, tx);
+            var v = Mathf.Lerp(v0, v1, ty) * Sqr2;
+
+            var sample = new NoiseSample
+            {
+
+            };
+
+            return sample;
+        }
+
 
         /// <summary>
         /// 2 dimensional perlin noise
@@ -377,9 +461,21 @@ namespace Gameframe.Procgen
         {
             return SmoothStep.Degree5(t);
         }
+
+        private static float SmoothDerivative(float t)
+        {
+            return SmoothStep.Degree5Derivative(t);
+        }
     }
 
     public static class SimplexGradientNoise
     {
+        public static float Noise1D(float x, uint seed)
+        {
+            var x0 = Mathf.FloorToInt(x);
+            var x1 = x - x0;
+
+            return 0;
+        }
     }
 }
