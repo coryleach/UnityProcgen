@@ -60,6 +60,13 @@ namespace Gameframe.Procgen
             texture.Apply();
             return texture;
         }
+
+        public static void SaveTextureAsPNG(Texture2D tex2d, string fullPath)
+        {
+            var bytes = tex2d.EncodeToPNG();
+            System.IO.File.WriteAllBytes(fullPath, bytes);
+            Debug.Log(bytes.Length / 1024 + "Kb was saved as: " + fullPath);
+        }
     }
 
 }

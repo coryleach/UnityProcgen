@@ -1,0 +1,172 @@
+using System;
+using UnityEngine;
+using UnityEngine.Experimental.Rendering;
+
+namespace Gameframe.Procgen
+{
+    [ExecuteAlways]
+    public class NoiseVisualizer2D : MonoBehaviour
+    {
+        [SerializeField]
+        private NoiseGenerator _noiseGenerator;
+
+        [SerializeField]
+        private Renderer _renderer;
+
+        [SerializeField] private int textureResolution = 256;
+
+        [SerializeField] private uint seed = 100;
+        [SerializeField] private float frequency = 1;
+        [SerializeField] private float scale = 1;
+        [SerializeField] private float offset = 0;
+
+        [SerializeField] private FilterMode filterMode = FilterMode.Point;
+
+        private Texture2D _texture;
+
+        public enum Dimension
+        {
+            Value1D,
+            Value2D,
+            Value3D,
+            Perlin1D,
+            Perlin2D,
+            Perlin3D
+        }
+
+        [SerializeField] private Dimension dimension = Dimension.Value2D;
+
+        private void OnEnable()
+        {
+            Generate();
+        }
+
+        private void OnDisable()
+        {
+            ClearTexture();
+        }
+
+        private Texture2D CreateTexture()
+        {
+            var tex =  new Texture2D(textureResolution, textureResolution)
+            {
+                filterMode = filterMode
+            };
+            return tex;
+        }
+
+        private void Update()
+        {
+            Generate();
+        }
+
+        [ContextMenu("Generate")]
+        private void Generate()
+        {
+            if (_noiseGenerator == null)
+            {
+                return;
+            }
+
+            if (_texture != null && (_texture.width != textureResolution || _texture.height != textureResolution))
+            {
+                ClearTexture();
+            }
+
+            if (_texture == null)
+            {
+                _texture = CreateTexture();
+            }
+
+            _texture.filterMode = filterMode;
+
+            _noiseGenerator.Seed = seed;
+            _noiseGenerator.Frequency = frequency;
+
+            var point00 = transform.TransformPoint(new Vector3(-0.5f,-0.5f));
+            var point10 = transform.TransformPoint(new Vector3( 0.5f,-0.5f));
+            var point01 = transform.TransformPoint(new Vector3(-0.5f, 0.5f));
+            var point11 = transform.TransformPoint(new Vector3( 0.5f, 0.5f));
+
+            var stepSize = 1f / textureResolution;
+
+            for (var y = 0; y < textureResolution; y++)
+            {
+                var point0 = Vector3.Lerp(point00, point01, (y + 0.5f) * stepSize);
+                var point1 = Vector3.Lerp(point10, point11, (y + 0.5f) * stepSize);
+
+                for (var x = 0; x < textureResolution; x++)
+                {
+                    var point = Vector3.Lerp(point0, point1, (x + 0.5f) * stepSize);
+                    var v = 0f;
+
+                    switch (dimension)
+                    {
+                        case Dimension.Value1D:
+                            v = _noiseGenerator.Value1D(point.x);
+                            break;
+                        case Dimension.Value2D:
+                            v = _noiseGenerator.Value2D(point.x, point.y);
+                            break;
+                        case Dimension.Value3D:
+                            v = _noiseGenerator.Value3D(point.x, point.y, point.z);
+                            break;
+                        case Dimension.Perlin1D:
+                            v = PerlinGradientNoise.Noise1D(point.x*frequency, seed);
+                            break;
+                        case Dimension.Perlin2D:
+                            v = PerlinGradientNoise.Noise2D(point.x*frequency, point.y*frequency, seed);
+                            break;
+                        case Dimension.Perlin3D:
+                            v = PerlinGradientNoise.Noise3D(point.x*frequency, point.y*frequency, point.z*frequency, seed);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+
+                    _texture.SetPixel(x,y, new Color(v,v,v,1f));
+                }
+            }
+
+            _texture.Apply();
+
+            _renderer.sharedMaterial.mainTexture = _texture;
+        }
+
+        [ContextMenu("SaveTexture")]
+        private void SaveTexture()
+        {
+            if (_texture == null)
+            {
+                Debug.LogError("Texture does not exist");
+                return;
+            }
+            TextureUtility.SaveTextureAsPNG(_texture,Application.dataPath + "GeneratedTexture.png");
+        }
+
+        private void ClearTexture()
+        {
+            if (_texture != null)
+            {
+                if (Application.isPlaying)
+                {
+                    Destroy(_texture);
+                }
+                else
+                {
+                    DestroyImmediate(_texture);
+                }
+            }
+        }
+
+        private void OnValidate()
+        {
+            if (_texture != null)
+            {
+                _texture.filterMode = filterMode;
+            }
+        }
+    }
+
+
+}
