@@ -25,6 +25,9 @@ namespace Gameframe.Procgen
 
         [SerializeField] private Vector3 offset;
 
+        [SerializeField] private bool showNormals;
+        [SerializeField] private float normalSize = 0.1f;
+
         private Mesh mesh;
         private int currentResolution;
         private Vector3[] vertices;
@@ -70,10 +73,23 @@ namespace Gameframe.Procgen
             Refresh();
         }
 
+        private void OnDrawGizmosSelected()
+        {
+            if (showNormals && vertices != null)
+            {
+                Gizmos.color = Color.yellow;
+                for (int v = 0; v < vertices.Length; v++)
+                {
+                    Gizmos.DrawRay( transform.TransformPoint(vertices[v]), normals[v] * normalSize);
+                }
+            }
+        }
+
         [ContextMenu("Refresh")]
         private void Refresh()
         {
-            if (currentResolution != resolution || mesh == null)
+            if (currentResolution != resolution || mesh == null || vertices == null ||
+                vertices.Length != ((resolution + 1) * (resolution + 1)))
             {
                 CreateMesh();
             }
@@ -83,8 +99,8 @@ namespace Gameframe.Procgen
             var point01 = transform.TransformPoint(new Vector3(-0.5f, 0, 0.5f)) + offset;
             var point11 = transform.TransformPoint(new Vector3(0.5f, 0, 0.5f)) + offset;
 
-            //var minSample = float.MaxValue;
-            //var maxSample = float.MinValue;
+            var minSample = float.MaxValue;
+            var maxSample = float.MinValue;
 
             var stepSize = 1f / resolution;
             for (int v = 0, y = 0; y <= resolution; y++)
@@ -95,16 +111,19 @@ namespace Gameframe.Procgen
                 {
                     var point = Vector3.Lerp(point0, point1, x * stepSize);
                     var sample = Noise(point);
-                    //minSample = Mathf.Min(sample, minSample);
-                   //maxSample = Mathf.Max(sample, maxSample);
-                    vertices[v].y = (sample - 0.5f) * strength;
-                    colors[v] = coloring.Evaluate(sample);
+                    minSample = Mathf.Min(sample.value, minSample);
+                    maxSample = Mathf.Max(sample.value, maxSample);
+                    vertices[v].y = (sample.value - 0.5f) * strength;
+                    colors[v] = coloring.Evaluate(sample.value);
+                    normals[v] = new Vector3(sample.derivative.x, 1, 0).normalized;
                 }
             }
 
+            //Debug.Log($"Min: {minSample} Max:{maxSample}");
+
             mesh.vertices = vertices;
+            mesh.normals = normals;
             mesh.colors = colors;
-            mesh.RecalculateNormals();
         }
 
         [ContextMenu("Force Refresh")]
@@ -114,40 +133,58 @@ namespace Gameframe.Procgen
             Refresh();
         }
 
-        private float Noise(Vector3 point)
+        private NoiseSample Noise(Vector3 point)
         {
             var v = 0f;
+            var sample = new NoiseSample();
             switch (dimension)
             {
                 case Dimension.Value1D:
-                    v = ValueNoise.Fractal1D(point.x * frequency, seed, frequency, octaves, lacunarity, persistence);
+                    //sample = ValueNoise.Sample1D(point.x, seed, frequency);
+                    sample = ValueNoise.FractalSample1D(point.x, seed:seed, frequency:frequency, octaves:octaves, lacunarity:lacunarity, persistence:persistence);
+                    //v = ValueNoise.Fractal1D(point.x * frequency, seed, frequency, octaves, lacunarity, persistence);
                     break;
                 case Dimension.Value2D:
                     v = ValueNoise.Fractal2D(point * frequency, seed, frequency, octaves, lacunarity, persistence);
+                    sample.value = v;
                     break;
                 case Dimension.Value3D:
                     v = ValueNoise.Fractal3D(point * frequency, seed, frequency, octaves, lacunarity, persistence);
+                    sample.value = v;
                     break;
                 case Dimension.Perlin1D:
                     v = PerlinGradientNoise.Fractal1D(point.x, seed, frequency, octaves, lacunarity, persistence);
+                    sample.value = v;
                     break;
                 case Dimension.Perlin2D:
                     v = PerlinGradientNoise.Fractal2D(point.x, point.y, seed, frequency, octaves, lacunarity,
                         persistence);
+                    sample.value = v;
                     break;
                 case Dimension.Perlin3D:
                     v = PerlinGradientNoise.Fractal3D(point.x, point.y, point.z, seed, frequency, octaves, lacunarity,
                         persistence);
+                    sample.value = v;
                     break;
             }
 
-            return v;
+            return sample;
         }
 
         private void CreateMesh()
         {
             currentResolution = resolution;
-            mesh.Clear();
+
+            if (mesh == null)
+            {
+                mesh = new Mesh();
+                mesh.name = "Surface Mesh";
+                MeshFilter.mesh = mesh;
+            }
+            else
+            {
+                mesh.Clear();
+            }
 
             vertices = new Vector3[(resolution + 1) * (resolution + 1)];
             colors = new Color[vertices.Length];

@@ -37,6 +37,23 @@ namespace Gameframe.Procgen
             return sum / range;
         }
 
+        public static NoiseSample FractalSample1D(float x, uint seed, float frequency, int octaves,
+            float lacunarity = 2f, float persistence = 0.5f)
+        {
+            var sum = Sample1D(x, seed, frequency);
+            var amplitude = 1f;
+            var range = 1f;
+            for (var i = 1; i < octaves; i++)
+            {
+                frequency *= lacunarity;
+                amplitude *= persistence;
+                range += amplitude;
+                sum += Sample1D(x, seed, frequency) * amplitude;
+            }
+
+            return sum * (1f / range);
+        }
+
         /// <summary>
         /// 2 dimensional fractal perlin noise
         /// </summary>
@@ -145,7 +162,8 @@ namespace Gameframe.Procgen
 
         public static NoiseSample Sample1D(float x, uint seed, float frequency = 1)
         {
-            var x0 = Mathf.FloorToInt(x * frequency);
+            x *= frequency;
+            var x0 = Mathf.FloorToInt(x);
             var x1 = x0 + 1;
 
             var t = Smooth(x - x0);
