@@ -1,3 +1,4 @@
+using System.Drawing;
 using UnityEngine;
 
 namespace Gameframe.Procgen
@@ -82,6 +83,28 @@ namespace Gameframe.Procgen
             return sum / range;
         }
 
+        public static NoiseSample FractalSample2D(Vector2 point, uint seed, float frequency, int octaves, float lacunarity = 2f, float persistence = 0.5f)
+        {
+            return FractalSample2D(point.x, point.y, seed, frequency, octaves, lacunarity, persistence);
+        }
+
+        public static NoiseSample FractalSample2D(float x, float y, uint seed, float frequency, int octaves,
+            float lacunarity = 2f, float persistence = 0.5f)
+        {
+            var sum = Sample2D(x * frequency, y * frequency, seed);
+            var amplitude = 1f;
+            var range = 1f;
+            for (var i = 1; i < octaves; i++)
+            {
+                frequency *= lacunarity;
+                amplitude *= persistence;
+                range += amplitude;
+                sum += Sample2D(x * frequency, y * frequency, seed) * amplitude;
+            }
+
+            return sum * (1f / range);
+        }
+
         /// <summary>
         /// 2 dimensional fractal perlin noise
         /// </summary>
@@ -127,6 +150,28 @@ namespace Gameframe.Procgen
             return sum / range;
         }
 
+        public static NoiseSample FractalSample3D(Vector3 point, uint seed, float frequency, int octaves, float lacunarity = 2f, float persistence = 0.5f)
+        {
+            return FractalSample3D(point.x, point.y, point.z, seed, frequency, octaves, lacunarity, persistence);
+        }
+
+        public static NoiseSample FractalSample3D(float x, float y, float z, uint seed, float frequency, int octaves,
+            float lacunarity = 2f, float persistence = 0.5f)
+        {
+            var sum = Sample3D(x * frequency, y * frequency, z * frequency, seed);
+            var amplitude = 1f;
+            var range = 1f;
+            for (var i = 1; i < octaves; i++)
+            {
+                frequency *= lacunarity;
+                amplitude *= persistence;
+                range += amplitude;
+                sum += Sample3D(x * frequency, y * frequency, z * frequency, seed) * amplitude;
+            }
+
+            return sum * (1f / range);
+        }
+
         /// <summary>
         /// 3 dimensional fractal perlin noise
         /// </summary>
@@ -166,8 +211,9 @@ namespace Gameframe.Procgen
             var x0 = Mathf.FloorToInt(x);
             var x1 = x0 + 1;
 
-            var t = Smooth(x - x0);
-            var dt = SmoothDerivative(x - x0);
+            var t = x - x0;
+            var dt = SmoothDerivative(t);
+            t = Smooth(t);
 
             var v0 = SquirrelEiserloh.Get1dNoiseZeroToOne(x0, seed);
             var v1 = SquirrelEiserloh.Get1dNoiseZeroToOne(x1, seed);
@@ -185,8 +231,6 @@ namespace Gameframe.Procgen
             sample.derivative.x = dv;
             sample.derivative.y = 0;
             sample.derivative.z = 0;
-
-            sample.derivative *= frequency;
 
             return sample;
         }
@@ -251,8 +295,6 @@ namespace Gameframe.Procgen
             sample.derivative.y = (c + d * tx) * dty;
             sample.derivative.z = 0;
 
-            sample.derivative *= frequency;
-
             return sample;
         }
 
@@ -302,6 +344,63 @@ namespace Gameframe.Procgen
 
             //Finally lerp over z
             return Mathf.Lerp(yEdge1, yEdge2, tz);
+        }
+
+        public static NoiseSample Sample3D(float x, float y, float z, uint seed, float frequency = 1f)
+        {
+            x *= frequency;
+            y *= frequency;
+            z *= frequency;
+
+            var x0 = Mathf.FloorToInt(x);
+            var y0 = Mathf.FloorToInt(y);
+            var z0 = Mathf.FloorToInt(z);
+
+            var x1 = x0 + 1;
+            var y1 = y0 + 1;
+            var z1 = z0 + 1;
+
+            var tx = x - x0;
+            var ty = y - y0;
+            var tz = z - z0;
+
+            var dtx = SmoothDerivative(tx);
+            var dty = SmoothDerivative(ty);
+            var dtz = SmoothDerivative(tz);
+
+            tx = Smooth(tx);
+            ty = Smooth(ty);
+            tz = Smooth(tz);
+
+            var v000 = SquirrelEiserloh.Get3dNoiseZeroToOne(x0, y0, z0, seed);
+            var v010 = SquirrelEiserloh.Get3dNoiseZeroToOne(x0, y1, z0, seed);
+            var v001 = SquirrelEiserloh.Get3dNoiseZeroToOne(x0, y0, z1, seed);
+            var v011 = SquirrelEiserloh.Get3dNoiseZeroToOne(x0, y1, z1, seed);
+
+            var v100 = SquirrelEiserloh.Get3dNoiseZeroToOne(x1, y0, z0, seed);
+            var v110 = SquirrelEiserloh.Get3dNoiseZeroToOne(x1, y1, z0, seed);
+            var v101 = SquirrelEiserloh.Get3dNoiseZeroToOne(x1, y0, z1, seed);
+            var v111 = SquirrelEiserloh.Get3dNoiseZeroToOne(x1, y1, z1, seed);
+
+            float a = v000;
+            float b = v100 - v000;
+            float c = v010 - v000;
+            float d = v001 - v000;
+            float e = v110 - v010 - v100 + v000;
+            float f = v101 - v001 - v100 + v000;
+            float g = v011 - v001 - v010 + v000;
+            float h = v111 - v011 - v101 + v001 - v110 + v010 + v100 - v000;
+
+            var sample = new NoiseSample
+            {
+                value = a + b * tx + (c + e * tx) * ty + (d + f * tx + (g + h * tx) * ty) * tz
+            };
+
+            sample.derivative.x = (b + e * ty + (f + h * ty) * tz) * dtx;
+            sample.derivative.y = (c + e * tx + (g + h * tx) * tz) * dty;
+            sample.derivative.z = (d + f * tx + (g + h * tx) * ty) * dtz;
+
+            return sample;
         }
 
         #endregion
