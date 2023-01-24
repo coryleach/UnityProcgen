@@ -29,7 +29,9 @@ namespace Gameframe.Procgen
             Value3D,
             Perlin1D,
             Perlin2D,
-            Perlin3D
+            Perlin3D,
+            SamplePerlin2D,
+            SamplePerlin3D,
         }
 
         [SerializeField] private Dimension dimension = Dimension.Value2D;
@@ -109,6 +111,12 @@ namespace Gameframe.Procgen
                             break;
                         case Dimension.Perlin3D:
                             v = PerlinGradientNoise.Fractal3D(point.x, point.y, point.z, seed, frequency, octaves, lacunarity, persistence);
+                            break;
+                        case Dimension.SamplePerlin2D:
+                            v = PerlinGradientNoise.FractalSample2D(point.x, point.y, seed, frequency, octaves, lacunarity, persistence).value;
+                            break;
+                        case Dimension.SamplePerlin3D:
+                            v = PerlinGradientNoise.FractalSample3D(point.x, point.y, point.z, seed, frequency, octaves, lacunarity, persistence).value;
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();

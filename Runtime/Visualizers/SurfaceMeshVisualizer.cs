@@ -56,7 +56,7 @@ namespace Gameframe.Procgen
             Value3D,
             Perlin1D,
             Perlin2D,
-            Perlin3D
+            Perlin3D,
         }
 
         [SerializeField] private Dimension dimension = Dimension.Value2D;
