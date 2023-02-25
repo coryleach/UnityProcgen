@@ -23,21 +23,9 @@ namespace Gameframe.Procgen
         /// <param name="lacunarity">frequency is multiplied by this number ever octave</param>
         /// <param name="persistence">measure of how much each octave will contribute. Values gt 1 make each octave larger. Values gt 0 but lt 1 make each successive octave contribution smaller.</param>
         /// <returns>Random value between 0 and 1</returns>
-        public static float Fractal1D(float x, uint seed, float frequency, int octaves, float lacunarity = 2f,
-            float persistence = 0.5f)
+        public static float Fractal1D(float x, uint seed, float frequency, int octaves, float lacunarity = 2f, float persistence = 0.5f)
         {
-            var sum = Noise1D(x * frequency, seed);
-            var amplitude = 1f;
-            var range = 1f;
-            for (var i = 1; i < octaves; i++)
-            {
-                frequency *= lacunarity;
-                amplitude *= persistence;
-                range += amplitude;
-                sum += Noise1D(x * frequency, seed) * amplitude;
-            }
-
-            return sum / range;
+            return FractalUtility.Float1D(Noise1D, x, seed, frequency, octaves, lacunarity, persistence);
         }
 
         /// <summary>
@@ -50,22 +38,9 @@ namespace Gameframe.Procgen
         /// <param name="lacunarity">frequency is multiplied by this number ever octave</param>
         /// <param name="persistence">measure of how much each octave will contribute. Values gt 1 make each octave larger. Values gt 0 but lt 1 make each successive octave contribution smaller.</param>
         /// <returns>Noise sample which includes value in range 0 to 1 and derivative of noise function at the sampled location</returns>
-        public static NoiseSample FractalSample1D(float x, uint seed, float frequency, int octaves,
-            float lacunarity = 2f,
-            float persistence = 0.5f)
+        public static NoiseSample FractalSample1D(float x, uint seed, float frequency, int octaves, float lacunarity = 2f, float persistence = 0.5f)
         {
-            var sum = Sample1D(x, seed, frequency);
-            var amplitude = 1f;
-            var range = 1f;
-            for (var i = 1; i < octaves; i++)
-            {
-                frequency *= lacunarity;
-                amplitude *= persistence;
-                range += amplitude;
-                sum += Sample1D(x, seed, frequency) * amplitude;
-            }
-
-            return sum * (1 / range);
+            return FractalUtility.Sample1D(Sample1D, x, seed, frequency, octaves, lacunarity, persistence);
         }
 
         /// <summary>
@@ -79,21 +54,9 @@ namespace Gameframe.Procgen
         /// <param name="lacunarity">frequency is multiplied by this number ever octave</param>
         /// <param name="persistence">measure of how much each octave will contribute. Values gt 1 make each octave larger. Values gt 0 but lt 1 make each successive octave contribution smaller.</param>
         /// <returns>Random value between 0 and 1</returns>
-        public static float Fractal2D(float x, float y, uint seed, float frequency, int octaves,
-            float lacunarity = 2f, float persistence = 0.5f)
+        public static float Fractal2D(float x, float y, uint seed, float frequency, int octaves, float lacunarity = 2f, float persistence = 0.5f)
         {
-            var sum = Noise2D(x * frequency, y * frequency, seed);
-            var amplitude = 1f;
-            var range = 1f;
-            for (var i = 1; i < octaves; i++)
-            {
-                frequency *= lacunarity;
-                amplitude *= persistence;
-                range += amplitude;
-                sum += Noise2D(x * frequency, y * frequency, seed) * amplitude;
-            }
-
-            return sum / range;
+            return FractalUtility.Float2D(Noise2D, x, y, seed, frequency, octaves, lacunarity, persistence);
         }
 
         /// <summary>
@@ -106,8 +69,7 @@ namespace Gameframe.Procgen
         /// <param name="lacunarity">frequency is multiplied by this number ever octave</param>
         /// <param name="persistence">measure of how much each octave will contribute. Values gt 1 make each octave larger. Values gt 0 but lt 1 make each successive octave contribution smaller.</param>
         /// <returns>Noise sample which includes value in range 0 to 1 and derivative of noise function at the sampled location</returns>
-        public static NoiseSample FractalSample2D(Vector2 point, uint seed, float frequency, int octaves,
-            float lacunarity = 2f, float persistence = 0.5f)
+        public static NoiseSample FractalSample2D(Vector2 point, uint seed, float frequency, int octaves, float lacunarity = 2f, float persistence = 0.5f)
         {
             return FractalSample2D(point.x, point.y, seed, frequency, octaves, lacunarity, persistence);
         }
@@ -123,21 +85,9 @@ namespace Gameframe.Procgen
         /// <param name="lacunarity">frequency is multiplied by this number ever octave</param>
         /// <param name="persistence">measure of how much each octave will contribute. Values gt 1 make each octave larger. Values gt 0 but lt 1 make each successive octave contribution smaller.</param>
         /// <returns>Noise sample which includes value in range 0 to 1 and derivative of noise function at the sampled location</returns>
-        public static NoiseSample FractalSample2D(float x, float y, uint seed, float frequency, int octaves,
-            float lacunarity = 2f, float persistence = 0.5f)
+        public static NoiseSample FractalSample2D(float x, float y, uint seed, float frequency, int octaves, float lacunarity = 2f, float persistence = 0.5f)
         {
-            var sum = Sample2D(x, y, seed, frequency);
-            var amplitude = 1f;
-            var range = 1f;
-            for (var i = 1; i < octaves; i++)
-            {
-                frequency *= lacunarity;
-                amplitude *= persistence;
-                range += amplitude;
-                sum += Sample2D(x, y, seed, frequency) * amplitude;
-            }
-
-            return sum * (1 / range);
+            return FractalUtility.Sample2D(Sample2D, x, y, seed, frequency, octaves, lacunarity, persistence);
         }
 
         /// <summary>
@@ -150,8 +100,7 @@ namespace Gameframe.Procgen
         /// <param name="lacunarity">frequency is multiplied by this number ever octave</param>
         /// <param name="persistence">measure of how much each octave will contribute. Values gt 1 make each octave larger. Values gt 0 but lt 1 make each successive octave contribution smaller.</param>
         /// <returns>Random value between 0 and 1</returns>
-        public static float Fractal2D(Vector2 position, uint seed, float frequency, int octaves, float lacunarity = 2,
-            float persistence = 0.5f)
+        public static float Fractal2D(Vector2 position, uint seed, float frequency, int octaves, float lacunarity = 2, float persistence = 0.5f)
         {
             return Fractal2D(position.x, position.y, seed, frequency, octaves, lacunarity, persistence);
         }
@@ -168,21 +117,9 @@ namespace Gameframe.Procgen
         /// <param name="lacunarity">frequency is multiplied by this number ever octave</param>
         /// <param name="persistence">measure of how much each octave will contribute. Values gt 1 make each octave larger. Values gt 0 but lt 1 make each successive octave contribution smaller.</param>
         /// <returns>Random value between 0 and 1</returns>
-        public static float Fractal3D(float x, float y, float z, uint seed, float frequency, int octaves,
-            float lacunarity = 2f, float persistence = 0.5f)
+        public static float Fractal3D(float x, float y, float z, uint seed, float frequency, int octaves, float lacunarity = 2f, float persistence = 0.5f)
         {
-            var sum = Noise3D(x * frequency, y * frequency, z * frequency, seed);
-            var amplitude = 1f;
-            var range = 1f;
-            for (var i = 1; i < octaves; i++)
-            {
-                frequency *= lacunarity;
-                amplitude *= persistence;
-                range += amplitude;
-                sum += Noise3D(x * frequency, y * frequency, z * frequency, seed) * amplitude;
-            }
-
-            return sum / range;
+            return FractalUtility.Float3D(Noise3D, x, y, z, seed, frequency, octaves, lacunarity, persistence);
         }
 
         /// <summary>
@@ -195,8 +132,7 @@ namespace Gameframe.Procgen
         /// <param name="lacunarity">frequency is multiplied by this number ever octave</param>
         /// <param name="persistence">measure of how much each octave will contribute. Values gt 1 make each octave larger. Values gt 0 but lt 1 make each successive octave contribution smaller.</param>
         /// <returns>Noise sample which includes value in range 0 to 1 and derivative of noise function at the sampled location</returns>
-        public static NoiseSample FractalSample3D(Vector3 point, uint seed, float frequency, int octaves,
-            float lacunarity = 2f, float persistence = 0.5f)
+        public static NoiseSample FractalSample3D(Vector3 point, uint seed, float frequency, int octaves, float lacunarity = 2f, float persistence = 0.5f)
         {
             return FractalSample3D(point.x, point.y, point.z, seed, frequency, octaves, lacunarity, persistence);
         }
@@ -213,21 +149,9 @@ namespace Gameframe.Procgen
         /// <param name="lacunarity">frequency is multiplied by this number ever octave</param>
         /// <param name="persistence">measure of how much each octave will contribute. Values gt 1 make each octave larger. Values gt 0 but lt 1 make each successive octave contribution smaller.</param>
         /// <returns>Noise sample which includes value in range 0 to 1 and derivative of noise function at the sampled location</returns>
-        public static NoiseSample FractalSample3D(float x, float y, float z, uint seed, float frequency, int octaves,
-            float lacunarity = 2f, float persistence = 0.5f)
+        public static NoiseSample FractalSample3D(float x, float y, float z, uint seed, float frequency, int octaves, float lacunarity = 2f, float persistence = 0.5f)
         {
-            var sum = Sample3D(x, y, z, seed, frequency);
-            var amplitude = 1f;
-            var range = 1f;
-            for (var i = 1; i < octaves; i++)
-            {
-                frequency *= lacunarity;
-                amplitude *= persistence;
-                range += amplitude;
-                sum += Sample3D(x, y, z, seed, frequency) * amplitude;
-            }
-
-            return sum * (1f / range);
+            return FractalUtility.Sample3D(Sample3D, x, y, z, seed, frequency, octaves, lacunarity, persistence);
         }
 
         /// <summary>
@@ -240,8 +164,7 @@ namespace Gameframe.Procgen
         /// <param name="lacunarity">frequency is multiplied by this number ever octave</param>
         /// <param name="persistence">measure of how much each octave will contribute. Values gt 1 make each octave larger. Values gt 0 but lt 1 make each successive octave contribution smaller.</param>
         /// <returns>Random value between 0 and 1</returns>
-        public static float Fractal3D(Vector3 position, uint seed, float frequency, int octaves, float lacunarity = 2,
-            float persistence = 0.5f)
+        public static float Fractal3D(Vector3 position, uint seed, float frequency, int octaves, float lacunarity = 2, float persistence = 0.5f)
         {
             return Fractal3D(position.x, position.y, position.z, seed, frequency, octaves, lacunarity, persistence);
         }
@@ -256,8 +179,10 @@ namespace Gameframe.Procgen
         /// <param name="x">x position</param>
         /// <param name="seed">rng seed</param>
         /// <returns>value between 0 and 1 (inclusive)</returns>
-        public static float Noise1D(float x, uint seed)
+        public static float Noise1D(float x, uint seed, float frequency = 1f)
         {
+            x *= frequency;
+
             var x0 = Mathf.FloorToInt(x);
             var x1 = x0 + 1;
 
@@ -330,8 +255,11 @@ namespace Gameframe.Procgen
         /// <param name="y">y position</param>
         /// <param name="seed">rng seed</param>
         /// <returns>value between 0 and 1 (inclusive)</returns>
-        public static float Noise2D(float x, float y, uint seed)
+        public static float Noise2D(float x, float y, uint seed, float frequency = 1f)
         {
+            x *= frequency;
+            y *= frequency;
+
             var x0 = Mathf.FloorToInt(x);
             var x1 = x0 + 1;
 
@@ -449,9 +377,9 @@ namespace Gameframe.Procgen
         /// <param name="position">Vector2 position</param>
         /// <param name="seed">rng seed</param>
         /// <returns>value between 0 and 1 (inclusive)</returns>
-        public static float Noise2D(Vector2 position, uint seed)
+        public static float Noise2D(Vector2 position, uint seed, float frequency = 1f)
         {
-            return Noise2D(position.x, position.y, seed);
+            return Noise2D(position.x, position.y, seed, frequency);
         }
 
         /// <summary>
@@ -462,8 +390,12 @@ namespace Gameframe.Procgen
         /// <param name="z">z position</param>
         /// <param name="seed">rng seed</param>
         /// <returns>value between 0 and 1 (inclusive)</returns>
-        public static float Noise3D(float x, float y, float z, uint seed)
+        public static float Noise3D(float x, float y, float z, uint seed, float frequency = 1f)
         {
+            x *= frequency;
+            y *= frequency;
+            z *= frequency;
+
             var x0 = Mathf.FloorToInt(x);
             var x1 = x0 + 1;
 
@@ -625,9 +557,9 @@ namespace Gameframe.Procgen
         /// <param name="position">Vector3 position</param>
         /// <param name="seed">rng seed</param>
         /// <returns>value between 0 and 1 (inclusive)</returns>
-        public static float Noise3D(Vector3 position, uint seed)
+        public static float Noise3D(Vector3 position, uint seed, float frequency = 1f)
         {
-            return Noise3D(position.x, position.y, position.z, seed);
+            return Noise3D(position.x, position.y, position.z, seed, frequency);
         }
 
         #endregion

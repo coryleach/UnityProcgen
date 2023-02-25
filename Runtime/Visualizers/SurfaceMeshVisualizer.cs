@@ -199,7 +199,7 @@ namespace Gameframe.Procgen
                     sample = SimplexGradientNoise.Gradient2D(point.x, point.y, seed, frequency);
                     break;
                 case Dimension.SimplexGradient3D:
-                    sample = SimplexGradientNoise.Gradient3D(point.x, point.y, point.z, seed, frequency);
+                    sample = SimplexGradientNoise.FractalGradient3D(point.x, point.y, point.z, seed, frequency, octaves, lacunarity, persistence);
                     break;
             }
             return sample;

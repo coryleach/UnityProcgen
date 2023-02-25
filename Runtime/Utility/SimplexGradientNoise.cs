@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace Gameframe.Procgen
@@ -27,24 +26,6 @@ namespace Gameframe.Procgen
 
             return sample;
         }
-        private static NoiseSample _Value1DPart(float pointX, int ix, uint seed)
-        {
-            var x = pointX - ix;
-            var f = 1f - x * x;
-            var f2 = f * f;
-            var f3 = f * f2;
-
-            var h = Hash1D(ix, seed);
-
-            return new NoiseSample
-            {
-                value = f3 * h,
-                derivative = new Vector3
-                {
-                    x = -6f * h * x * f2
-                }
-            };
-        }
         public static NoiseSample Gradient1D(float pointX, uint seed, float frequency)
         {
             pointX *= frequency;
@@ -60,6 +41,14 @@ namespace Gameframe.Procgen
             sample *= SimplexScale1D;
             sample.value = (sample.value + 1) * 0.5f;
             return sample;
+        }
+        public static NoiseSample FractalGradient1D(float pointX, uint seed, float frequency, int octaves, float lacunarity = 2f, float persistence = 0.5f)
+        {
+            return FractalUtility.Sample1D(Gradient1D, pointX, seed, frequency, octaves, lacunarity, persistence);
+        }
+        public static NoiseSample FractalValue1D(float pointX, uint seed, float frequency, int octaves, float lacunarity = 2f, float persistence = 0.5f)
+        {
+            return FractalUtility.Sample1D(Value1D, pointX, seed, frequency, octaves, lacunarity, persistence);
         }
         private static NoiseSample _Gradient1DPart(float pointX, int ix, uint seed)
         {
@@ -77,6 +66,24 @@ namespace Gameframe.Procgen
                 derivative = new Vector3
                 {
                     x = g * f3 - 6f * v * x * f2,
+                }
+            };
+        }
+        private static NoiseSample _Value1DPart(float pointX, int ix, uint seed)
+        {
+            var x = pointX - ix;
+            var f = 1f - x * x;
+            var f2 = f * f;
+            var f3 = f * f2;
+
+            var h = Hash1D(ix, seed);
+
+            return new NoiseSample
+            {
+                value = f3 * h,
+                derivative = new Vector3
+                {
+                    x = -6f * h * x * f2
                 }
             };
         }
@@ -148,6 +155,14 @@ namespace Gameframe.Procgen
             sample.value *= 0.5f;
 
             return sample;
+        }
+        public static NoiseSample FractalGradient2D(float x, float y, uint seed, float frequency, int octaves, float lacunarity = 2f, float persistence = 0.5f)
+        {
+            return FractalUtility.Sample2D(Gradient2D, x, y, seed, frequency, octaves, lacunarity, persistence);
+        }
+        public static NoiseSample FractalValue2D(float x, float y, uint seed, float frequency, int octaves, float lacunarity = 2f, float persistence = 0.5f)
+        {
+            return FractalUtility.Sample2D(Value2D, x, y, seed, frequency, octaves, lacunarity, persistence);
         }
         private static NoiseSample _Value2DPart(float x, float y, int ix, int iy, uint seed)
         {
@@ -354,25 +369,11 @@ namespace Gameframe.Procgen
         }
         public static NoiseSample FractalGradient3D(float x, float y, float z, uint seed, float frequency, int octaves, float lacunarity = 2f, float persistence = 0.5f)
         {
-            return _SampleFractal3D(Gradient3D, x, y, z, seed, frequency, octaves, lacunarity, persistence);
+            return FractalUtility.Sample3D(Gradient3D, x, y, z, seed, frequency, octaves, lacunarity, persistence);
         }
         public static NoiseSample FractalValue3D(float x, float y, float z, uint seed, float frequency, int octaves, float lacunarity = 2f, float persistence = 0.5f)
         {
-            return _SampleFractal3D(Value3D, x, y, z, seed, frequency, octaves, lacunarity, persistence);
-        }
-        private static NoiseSample _SampleFractal3D(Func<float, float, float, uint, float, NoiseSample> action, float x, float y, float z, uint seed, float frequency, int octaves, float lacunarity = 2f, float persistence = 0.5f)
-        {
-            var sum = action(x, y, z, seed, frequency);
-            var amplitude = 1f;
-            var range = 1f;
-            for (var i = 1; i < octaves; i++)
-            {
-                frequency *= lacunarity;
-                amplitude *= persistence;
-                range += amplitude;
-                sum += action(x, y, z, seed, frequency) * amplitude;
-            }
-            return sum * (1 / range);
+            return FractalUtility.Sample3D(Value3D, x, y, z, seed, frequency, octaves, lacunarity, persistence);
         }
         private static NoiseSample _Value3DPart(float x, float y, float z, int ix, int iy, int iz, uint seed)
         {

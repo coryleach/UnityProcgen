@@ -112,20 +112,16 @@ namespace Gameframe.Procgen
                     switch (dimension)
                     {
                         case Dimension.Value1D:
-                            v = ValueNoise.Fractal1D(point.x * frequency, seed, frequency, octaves, lacunarity,
-                                persistence);
+                            v = ValueNoise.Fractal1D(point.x * frequency, seed, frequency, octaves, lacunarity, persistence);
                             break;
                         case Dimension.Value2D:
-                            v = ValueNoise.Fractal2D(point * frequency, seed, frequency, octaves, lacunarity,
-                                persistence);
+                            v = ValueNoise.Fractal2D(point * frequency, seed, frequency, octaves, lacunarity, persistence);
                             break;
                         case Dimension.Value3D:
-                            v = ValueNoise.Fractal3D(point * frequency, seed, frequency, octaves, lacunarity,
-                                persistence);
+                            v = ValueNoise.Fractal3D(point * frequency, seed, frequency, octaves, lacunarity, persistence);
                             break;
                         case Dimension.Perlin1D:
-                            v = PerlinGradientNoise.Fractal1D(point.x, seed, frequency, octaves, lacunarity,
-                                persistence);
+                            v = PerlinGradientNoise.Fractal1D(point.x, seed, frequency, octaves, lacunarity, persistence);
                             break;
                         case Dimension.Perlin2D:
                             v = PerlinGradientNoise.Fractal2D(point.x, point.y, seed, frequency, octaves, lacunarity,
@@ -136,27 +132,25 @@ namespace Gameframe.Procgen
                                 lacunarity, persistence);
                             break;
                         case Dimension.SamplePerlin2D:
-                            v = PerlinGradientNoise.FractalSample2D(point.x, point.y, seed, frequency, octaves,
-                                lacunarity, persistence).value;
+                            v = PerlinGradientNoise.FractalSample2D(point.x, point.y, seed, frequency, octaves, lacunarity, persistence).value;
                             break;
                         case Dimension.SamplePerlin3D:
-                            v = PerlinGradientNoise.FractalSample3D(point.x, point.y, point.z, seed, frequency, octaves,
-                                lacunarity, persistence).value;
+                            v = PerlinGradientNoise.FractalSample3D(point.x, point.y, point.z, seed, frequency, octaves, lacunarity, persistence).value;
                             break;
                         case Dimension.SimplexValue1D:
-                            v = SimplexGradientNoise.Value1D(point.x, seed, frequency).value;
+                            v = SimplexGradientNoise.FractalValue1D(point.x, seed, frequency, octaves, lacunarity, persistence).value;
                             break;
                         case Dimension.SimplexValue2D:
-                            v = SimplexGradientNoise.Value2D(point.x, point.y, seed, frequency).value;
+                            v = SimplexGradientNoise.FractalValue2D(point.x, point.y, seed, frequency, octaves, lacunarity, persistence).value;
                             break;
                         case Dimension.SimplexValue3D:
-                            v = SimplexGradientNoise.Value3D(point.x, point.y, point.z, seed, frequency).value;
+                            v = SimplexGradientNoise.FractalValue3D(point.x, point.y, point.z, seed, frequency, octaves, lacunarity, persistence).value;
                             break;
                         case Dimension.SimplexGradient1D:
-                            v = SimplexGradientNoise.Gradient1D(point.x, seed, frequency).value;
+                            v = SimplexGradientNoise.FractalGradient1D(point.x, seed, frequency, octaves, lacunarity, persistence).value;
                             break;
                         case Dimension.SimplexGradient2D:
-                            v = SimplexGradientNoise.Gradient2D(point.x, point.y, seed, frequency).value;
+                            v = SimplexGradientNoise.FractalGradient2D(point.x, point.y, seed, frequency, octaves, lacunarity, persistence).value;
                             break;
                         case Dimension.SimplexGradient3D:
                             v = SimplexGradientNoise.FractalGradient3D(point.x, point.y, point.z, seed, frequency, octaves, lacunarity, persistence).value;
