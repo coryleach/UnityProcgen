@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Gameframe.Procgen
@@ -11,7 +12,7 @@ namespace Gameframe.Procgen
         private static readonly float SimplexScale1D = 64f / 27f;
 
         #region 1D
-        public static NoiseSample SampleValue1D(float pointX, uint seed, float frequency)
+        public static NoiseSample Value1D(float pointX, uint seed, float frequency)
         {
             pointX *= frequency;
 
@@ -44,7 +45,7 @@ namespace Gameframe.Procgen
                 }
             };
         }
-        public static NoiseSample SampleGradient1D(float pointX, uint seed, float frequency)
+        public static NoiseSample Gradient1D(float pointX, uint seed, float frequency)
         {
             pointX *= frequency;
 
@@ -86,7 +87,7 @@ namespace Gameframe.Procgen
         #endregion
 
         #region 2D
-        public static NoiseSample SampleValue2D(float x, float y, uint seed, float frequency)
+        public static NoiseSample Value2D(float x, float y, uint seed, float frequency)
         {
             x *= frequency;
             y *= frequency;
@@ -115,7 +116,7 @@ namespace Gameframe.Procgen
 
             return sample * 8;
         }
-        public static NoiseSample SampleGradient2D(float x, float y, uint seed, float frequency)
+        public static NoiseSample Gradient2D(float x, float y, uint seed, float frequency)
         {
             x *= frequency;
             y *= frequency;
@@ -212,7 +213,7 @@ namespace Gameframe.Procgen
         #endregion
 
         #region 3D
-        public static NoiseSample SampleValue3D(float x, float y, float z, uint seed, float frequency)
+        public static NoiseSample Value3D(float x, float y, float z, uint seed, float frequency)
         {
             x *= frequency;
             y *= frequency;
@@ -280,7 +281,7 @@ namespace Gameframe.Procgen
 
             return sample * 8;
         }
-        public static NoiseSample SampleGradient3D(float x, float y, float z, uint seed, float frequency)
+        public static NoiseSample Gradient3D(float x, float y, float z, uint seed, float frequency)
         {
             x *= frequency;
             y *= frequency;
@@ -350,6 +351,28 @@ namespace Gameframe.Procgen
             sample.value *= 0.5f;
 
             return sample;
+        }
+        public static NoiseSample FractalGradient3D(float x, float y, float z, uint seed, float frequency, int octaves, float lacunarity = 2f, float persistence = 0.5f)
+        {
+            return _SampleFractal3D(Gradient3D, x, y, z, seed, frequency, octaves, lacunarity, persistence);
+        }
+        public static NoiseSample FractalValue3D(float x, float y, float z, uint seed, float frequency, int octaves, float lacunarity = 2f, float persistence = 0.5f)
+        {
+            return _SampleFractal3D(Value3D, x, y, z, seed, frequency, octaves, lacunarity, persistence);
+        }
+        private static NoiseSample _SampleFractal3D(Func<float, float, float, uint, float, NoiseSample> action, float x, float y, float z, uint seed, float frequency, int octaves, float lacunarity = 2f, float persistence = 0.5f)
+        {
+            var sum = action(x, y, z, seed, frequency);
+            var amplitude = 1f;
+            var range = 1f;
+            for (var i = 1; i < octaves; i++)
+            {
+                frequency *= lacunarity;
+                amplitude *= persistence;
+                range += amplitude;
+                sum += action(x, y, z, seed, frequency) * amplitude;
+            }
+            return sum * (1 / range);
         }
         private static NoiseSample _Value3DPart(float x, float y, float z, int ix, int iy, int iz, uint seed)
         {

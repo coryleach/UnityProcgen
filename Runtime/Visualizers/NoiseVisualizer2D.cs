@@ -144,22 +144,22 @@ namespace Gameframe.Procgen
                                 lacunarity, persistence).value;
                             break;
                         case Dimension.SimplexValue1D:
-                            v = SimplexGradientNoise.SampleValue1D(point.x, seed, frequency).value;
+                            v = SimplexGradientNoise.Value1D(point.x, seed, frequency).value;
                             break;
                         case Dimension.SimplexValue2D:
-                            v = SimplexGradientNoise.SampleValue2D(point.x, point.y, seed, frequency).value;
+                            v = SimplexGradientNoise.Value2D(point.x, point.y, seed, frequency).value;
                             break;
                         case Dimension.SimplexValue3D:
-                            v = SimplexGradientNoise.SampleValue3D(point.x, point.y, point.z, seed, frequency).value;
+                            v = SimplexGradientNoise.Value3D(point.x, point.y, point.z, seed, frequency).value;
                             break;
                         case Dimension.SimplexGradient1D:
-                            v = SimplexGradientNoise.SampleGradient1D(point.x, seed, frequency).value;
+                            v = SimplexGradientNoise.Gradient1D(point.x, seed, frequency).value;
                             break;
                         case Dimension.SimplexGradient2D:
-                            v = SimplexGradientNoise.SampleGradient2D(point.x, point.y, seed, frequency).value;
+                            v = SimplexGradientNoise.Gradient2D(point.x, point.y, seed, frequency).value;
                             break;
                         case Dimension.SimplexGradient3D:
-                            v = SimplexGradientNoise.SampleGradient3D(point.x, point.y, point.z, seed, frequency).value;
+                            v = SimplexGradientNoise.FractalGradient3D(point.x, point.y, point.z, seed, frequency, octaves, lacunarity, persistence).value;
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -172,7 +172,7 @@ namespace Gameframe.Procgen
                 }
             }
 
-            Debug.Log($"Min: {minValue} Max: {maxValue}");
+            //Debug.Log($"Min: {minValue} Max: {maxValue}");
 
             _texture.Apply();
 

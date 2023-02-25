@@ -184,22 +184,22 @@ namespace Gameframe.Procgen
                     sample = PerlinGradientNoise.FractalSample3D(point.x, point.y, point.z, seed, frequency, octaves, lacunarity, persistence);
                     break;
                 case Dimension.SimplexValue1D:
-                    sample = SimplexGradientNoise.SampleValue1D(point.x, seed, frequency);
+                    sample = SimplexGradientNoise.Value1D(point.x, seed, frequency);
                     break;
                 case Dimension.SimplexValue2D:
-                    sample = SimplexGradientNoise.SampleValue2D(point.x, point.y, seed, frequency);
+                    sample = SimplexGradientNoise.Value2D(point.x, point.y, seed, frequency);
                     break;
                 case Dimension.SimplexValue3D:
-                    sample = SimplexGradientNoise.SampleValue3D(point.x, point.y, point.z, seed, frequency);
+                    sample = SimplexGradientNoise.Value3D(point.x, point.y, point.z, seed, frequency);
                     break;
                 case Dimension.SimplexGradient1D:
-                    sample = SimplexGradientNoise.SampleGradient1D(point.x, seed, frequency);
+                    sample = SimplexGradientNoise.Gradient1D(point.x, seed, frequency);
                     break;
                 case Dimension.SimplexGradient2D:
-                    sample = SimplexGradientNoise.SampleGradient2D(point.x, point.y, seed, frequency);
+                    sample = SimplexGradientNoise.Gradient2D(point.x, point.y, seed, frequency);
                     break;
                 case Dimension.SimplexGradient3D:
-                    sample = SimplexGradientNoise.SampleGradient3D(point.x, point.y, point.z, seed, frequency);
+                    sample = SimplexGradientNoise.Gradient3D(point.x, point.y, point.z, seed, frequency);
                     break;
             }
             return sample;
