@@ -11,46 +11,6 @@ namespace Gameframe.Procgen
     {
         private static readonly float Sqr2 = Mathf.Sqrt(2f);
 
-        private const int GradientsMask1D = 1;
-        private static readonly float[] Gradients1D = new[] {1f, -1f};
-
-        private const int GradientsMask2D = 7;
-
-        private static readonly Vector2[] Gradients2D =
-        {
-            new Vector2(1f, 0f),
-            new Vector2(-1f, 0f),
-            new Vector2(0f, 1f),
-            new Vector2(0f, -1f),
-            new Vector2(1f, 1f).normalized,
-            new Vector2(-1f, 1f).normalized,
-            new Vector2(1f, -1f).normalized,
-            new Vector2(-1f, -1f).normalized
-        };
-
-        private const int GradientsMask3D = 15;
-
-        private static readonly Vector3[] Gradients3D =
-        {
-            new Vector3( 1f, 1f, 0f),
-            new Vector3(-1f, 1f, 0f),
-            new Vector3( 1f,-1f, 0f),
-            new Vector3(-1f,-1f, 0f),
-            new Vector3( 1f, 0f, 1f),
-            new Vector3(-1f, 0f, 1f),
-            new Vector3( 1f, 0f,-1f),
-            new Vector3(-1f, 0f,-1f),
-            new Vector3( 0f, 1f, 1f),
-            new Vector3( 0f,-1f, 1f),
-            new Vector3( 0f, 1f,-1f),
-            new Vector3( 0f,-1f,-1f),
-
-            new Vector3( 1f, 1f, 0f),
-            new Vector3(-1f, 1f, 0f),
-            new Vector3( 0f,-1f, 1f),
-            new Vector3( 0f,-1f,-1f)
-        };
-
         #region Fractal Noise
 
         /// <summary>
@@ -304,8 +264,8 @@ namespace Gameframe.Procgen
             var t0 = x - x0;
             var t1 = t0 - 1f;
 
-            var g0 = HashToGradient1D(Hash1D(x0, seed));
-            var g1 = HashToGradient1D(Hash1D(x1, seed));
+            var g0 = NoiseGradients.Gradient1D(x0, seed);
+            var g1 = NoiseGradients.Gradient1D(x1, seed);
 
             var v0 = g0 * t0;
             var v1 = g1 * t1;
@@ -332,8 +292,8 @@ namespace Gameframe.Procgen
             var t0 = x - x0;
             var t1 = t0 - 1f;
 
-            var g0 = HashToGradient1D(Hash1D(x0, seed));
-            var g1 = HashToGradient1D(Hash1D(x1, seed));
+            var g0 = NoiseGradients.Gradient1D(x0, seed);
+            var g1 = NoiseGradients.Gradient1D(x1, seed);
 
             var v0 = g0 * t0;
             var v1 = g1 * t1;
@@ -384,15 +344,15 @@ namespace Gameframe.Procgen
             var ty0 = y - y0;
             var ty1 = ty0 - 1f;
 
-            var g00 = HashToGradient2D(Hash2D(x0, y0, seed));
-            var g10 = HashToGradient2D(Hash2D(x1, y0, seed));
-            var g01 = HashToGradient2D(Hash2D(x0, y1, seed));
-            var g11 = HashToGradient2D(Hash2D(x1, y1, seed));
+            var g00 = NoiseGradients.Gradient2D(x0, y0, seed);
+            var g10 = NoiseGradients.Gradient2D(x1, y0, seed);
+            var g01 = NoiseGradients.Gradient2D(x0, y1, seed);
+            var g11 = NoiseGradients.Gradient2D(x1, y1, seed);
 
-            var v00 = Dot2D(g00, tx0, ty0);
-            var v10 = Dot2D(g10, tx1, ty0);
-            var v01 = Dot2D(g01, tx0, ty1);
-            var v11 = Dot2D(g11, tx1, ty1);
+            var v00 = NoiseGradients.Dot2D(g00, tx0, ty0);
+            var v10 = NoiseGradients.Dot2D(g10, tx1, ty0);
+            var v01 = NoiseGradients.Dot2D(g01, tx0, ty1);
+            var v11 = NoiseGradients.Dot2D(g11, tx1, ty1);
 
             var tx = Smooth(tx0);
             var ty = Smooth(ty0);
@@ -440,15 +400,15 @@ namespace Gameframe.Procgen
             var ty0 = y - y0;
             var ty1 = ty0 - 1f;
 
-            var g00 = HashToGradient2D(Hash2D(x0, y0, seed));
-            var g10 = HashToGradient2D(Hash2D(x1, y0, seed));
-            var g01 = HashToGradient2D(Hash2D(x0, y1, seed));
-            var g11 = HashToGradient2D(Hash2D(x1, y1, seed));
+            var g00 = NoiseGradients.Gradient2D(x0, y0, seed);
+            var g10 = NoiseGradients.Gradient2D(x1, y0, seed);
+            var g01 = NoiseGradients.Gradient2D(x0, y1, seed);
+            var g11 = NoiseGradients.Gradient2D(x1, y1, seed);
 
-            var v00 = Dot2D(g00, tx0, ty0);
-            var v10 = Dot2D(g10, tx1, ty0);
-            var v01 = Dot2D(g01, tx0, ty1);
-            var v11 = Dot2D(g11, tx1, ty1);
+            var v00 = NoiseGradients.Dot2D(g00, tx0, ty0);
+            var v10 = NoiseGradients.Dot2D(g10, tx1, ty0);
+            var v01 = NoiseGradients.Dot2D(g01, tx0, ty1);
+            var v11 = NoiseGradients.Dot2D(g11, tx1, ty1);
 
             var tx = Smooth(tx0);
             var ty = Smooth(ty0);
@@ -522,32 +482,23 @@ namespace Gameframe.Procgen
             var tz0 = z - z0;
             var tz1 = tz0 - 1f;
 
-            var h000 = Hash3D(x0, y0, z0, seed);
-            var h010 = Hash3D(x0, y1, z0, seed);
-            var h001 = Hash3D(x0, y0, z1, seed);
-            var h011 = Hash3D(x0, y1, z1, seed);
-            var h100 = Hash3D(x1, y0, z0, seed);
-            var h110 = Hash3D(x1, y1, z0, seed);
-            var h101 = Hash3D(x1, y0, z1, seed);
-            var h111 = Hash3D(x1, y1, z1, seed);
+            var g000 = NoiseGradients.Gradient3D(x0, y0, z0, seed);
+            var g100 = NoiseGradients.Gradient3D(x1, y0, z0, seed);
+            var g010 = NoiseGradients.Gradient3D(x0, y1, z0, seed);
+            var g110 = NoiseGradients.Gradient3D(x1, y1, z0, seed);
+            var g001 = NoiseGradients.Gradient3D(x0, y0, z1, seed);
+            var g101 = NoiseGradients.Gradient3D(x1, y0, z1, seed);
+            var g011 = NoiseGradients.Gradient3D(x0, y1, z1, seed);
+            var g111 = NoiseGradients.Gradient3D(x1, y1, z1, seed);
 
-            var g000 = HashToGradient3D(h000);
-            var g100 = HashToGradient3D(h100);
-            var g010 = HashToGradient3D(h010);
-            var g110 = HashToGradient3D(h110);
-            var g001 = HashToGradient3D(h001);
-            var g101 = HashToGradient3D(h101);
-            var g011 = HashToGradient3D(h011);
-            var g111 = HashToGradient3D(h111);
-
-            var v000 = Dot3D(g000, tx0, ty0, tz0);
-            var v100 = Dot3D(g100, tx1, ty0, tz0);
-            var v010 = Dot3D(g010, tx0, ty1, tz0);
-            var v110 = Dot3D(g110, tx1, ty1, tz0);
-            var v001 = Dot3D(g001, tx0, ty0, tz1);
-            var v101 = Dot3D(g101, tx1, ty0, tz1);
-            var v011 = Dot3D(g011, tx0, ty1, tz1);
-            var v111 = Dot3D(g111, tx1, ty1, tz1);
+            var v000 = NoiseGradients.Dot3D(g000, tx0, ty0, tz0);
+            var v100 = NoiseGradients.Dot3D(g100, tx1, ty0, tz0);
+            var v010 = NoiseGradients.Dot3D(g010, tx0, ty1, tz0);
+            var v110 = NoiseGradients.Dot3D(g110, tx1, ty1, tz0);
+            var v001 = NoiseGradients.Dot3D(g001, tx0, ty0, tz1);
+            var v101 = NoiseGradients.Dot3D(g101, tx1, ty0, tz1);
+            var v011 = NoiseGradients.Dot3D(g011, tx0, ty1, tz1);
+            var v111 = NoiseGradients.Dot3D(g111, tx1, ty1, tz1);
 
             var tx = Smooth(tx0);
             var ty = Smooth(ty0);
@@ -609,32 +560,23 @@ namespace Gameframe.Procgen
             var y1 = y0 + 1;
             var z1 = z0 + 1;
 
-            var h000 = Hash3D(x0, y0, z0, seed);
-            var h010 = Hash3D(x0, y1, z0, seed);
-            var h001 = Hash3D(x0, y0, z1, seed);
-            var h011 = Hash3D(x0, y1, z1, seed);
-            var h100 = Hash3D(x1, y0, z0, seed);
-            var h110 = Hash3D(x1, y1, z0, seed);
-            var h101 = Hash3D(x1, y0, z1, seed);
-            var h111 = Hash3D(x1, y1, z1, seed);
+            var g000 = NoiseGradients.Gradient3D(x0, y0, z0, seed);
+            var g100 = NoiseGradients.Gradient3D(x1, y0, z0, seed);
+            var g010 = NoiseGradients.Gradient3D(x0, y1, z0, seed);
+            var g110 = NoiseGradients.Gradient3D(x1, y1, z0, seed);
+            var g001 = NoiseGradients.Gradient3D(x0, y0, z1, seed);
+            var g101 = NoiseGradients.Gradient3D(x1, y0, z1, seed);
+            var g011 = NoiseGradients.Gradient3D(x0, y1, z1, seed);
+            var g111 = NoiseGradients.Gradient3D(x1, y1, z1, seed);
 
-            var g000 = HashToGradient3D(h000);
-            var g100 = HashToGradient3D(h100);
-            var g010 = HashToGradient3D(h010);
-            var g110 = HashToGradient3D(h110);
-            var g001 = HashToGradient3D(h001);
-            var g101 = HashToGradient3D(h101);
-            var g011 = HashToGradient3D(h011);
-            var g111 = HashToGradient3D(h111);
-
-            var v000 = Dot3D(g000, tx0, ty0, tz0);
-            var v100 = Dot3D(g100, tx1, ty0, tz0);
-            var v010 = Dot3D(g010, tx0, ty1, tz0);
-            var v110 = Dot3D(g110, tx1, ty1, tz0);
-            var v001 = Dot3D(g001, tx0, ty0, tz1);
-            var v101 = Dot3D(g101, tx1, ty0, tz1);
-            var v011 = Dot3D(g011, tx0, ty1, tz1);
-            var v111 = Dot3D(g111, tx1, ty1, tz1);
+            var v000 = NoiseGradients.Dot3D(g000, tx0, ty0, tz0);
+            var v100 = NoiseGradients.Dot3D(g100, tx1, ty0, tz0);
+            var v010 = NoiseGradients.Dot3D(g010, tx0, ty1, tz0);
+            var v110 = NoiseGradients.Dot3D(g110, tx1, ty1, tz0);
+            var v001 = NoiseGradients.Dot3D(g001, tx0, ty0, tz1);
+            var v101 = NoiseGradients.Dot3D(g101, tx1, ty0, tz1);
+            var v011 = NoiseGradients.Dot3D(g011, tx0, ty1, tz1);
+            var v111 = NoiseGradients.Dot3D(g111, tx1, ty1, tz1);
 
             var dtx = SmoothDerivative(tx0);
             var dty = SmoothDerivative(ty0);
@@ -689,46 +631,6 @@ namespace Gameframe.Procgen
         }
 
         #endregion
-
-        private static float HashToGradient1D(uint value)
-        {
-            return Gradients1D[value & GradientsMask1D];
-        }
-
-        private static Vector2 HashToGradient2D(uint value)
-        {
-            return Gradients2D[value & GradientsMask2D];
-        }
-
-        private static Vector3 HashToGradient3D(uint value)
-        {
-            return Gradients3D[value & GradientsMask3D];
-        }
-
-        private static uint Hash1D(int value, uint seed)
-        {
-            return SquirrelEiserloh.Get1dNoiseUint(value, seed);
-        }
-
-        private static uint Hash2D(int x, int y, uint seed)
-        {
-            return SquirrelEiserloh.Get2dNoiseUint(x, y, seed);
-        }
-
-        private static uint Hash3D(int x, int y, int z, uint seed)
-        {
-            return SquirrelEiserloh.Get3dNoiseUint(x, y, z, seed);
-        }
-
-        private static float Dot2D(Vector2 g, float x, float y)
-        {
-            return g.x * x + g.y * y;
-        }
-
-        private static float Dot3D(Vector3 g, float x, float y, float z)
-        {
-            return g.x * x + g.y * y + g.z * z;
-        }
 
         private static float Smooth(float t)
         {
