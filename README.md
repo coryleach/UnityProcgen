@@ -40,7 +40,9 @@ Find the manifest.json file in the Packages folder of your project and edit it t
 
 ## Usage
 
-This code is still in a pretty rough state but I've uploaded it here for those interested.  
+Provides Value, Perlin and Simplex noise functions that are seeded and random-access.
+Perlin and Simplex noise methods are based on the [Catlike Coding](https://catlikecoding.com/unity/tutorials/simplex-noise/) tutorial but are implemented using Squirrel Eiserloh's noise algorithm rather than the hash method used in the tutorial. This provides the ability to Seed all the noise functions.
+  
 There is a demo package included in the demo folder. After importing this as a package just double click it to import.  
   
 The demo requires that you import Shader Graph and the Universal Render Pipeline packages from the package manager.  
