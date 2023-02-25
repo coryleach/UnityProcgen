@@ -57,7 +57,12 @@ namespace Gameframe.Procgen
             Perlin1D,
             Perlin2D,
             Perlin3D,
-            Simplex1D,
+            SimplexValue1D,
+            SimplexValue2D,
+            SimplexValue3D,
+            SimplexGradient1D,
+            SimplexGradient2D,
+            SimplexGradient3D
         }
 
         [SerializeField] private Dimension dimension = Dimension.Value2D;
@@ -178,8 +183,23 @@ namespace Gameframe.Procgen
                 case Dimension.Perlin3D:
                     sample = PerlinGradientNoise.FractalSample3D(point.x, point.y, point.z, seed, frequency, octaves, lacunarity, persistence);
                     break;
-                case Dimension.Simplex1D:
-                    //sample = SimplexGradientNoise.Noise1D(point.x, seed);
+                case Dimension.SimplexValue1D:
+                    sample = SimplexGradientNoise.SampleValue1D(point.x, seed, frequency);
+                    break;
+                case Dimension.SimplexValue2D:
+                    sample = SimplexGradientNoise.SampleValue2D(point.x, point.y, seed, frequency);
+                    break;
+                case Dimension.SimplexValue3D:
+                    sample = SimplexGradientNoise.SampleValue3D(point.x, point.y, point.z, seed, frequency);
+                    break;
+                case Dimension.SimplexGradient1D:
+                    sample = SimplexGradientNoise.SampleGradient1D(point.x, seed, frequency);
+                    break;
+                case Dimension.SimplexGradient2D:
+                    sample = SimplexGradientNoise.SampleGradient2D(point.x, point.y, seed, frequency);
+                    break;
+                case Dimension.SimplexGradient3D:
+                    sample = SimplexGradientNoise.SampleGradient3D(point.x, point.y, point.z, seed, frequency);
                     break;
             }
             return sample;
