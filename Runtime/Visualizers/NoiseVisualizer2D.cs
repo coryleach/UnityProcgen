@@ -7,8 +7,7 @@ namespace Gameframe.Procgen
     [ExecuteAlways]
     public class NoiseVisualizer2D : MonoBehaviour
     {
-        [SerializeField]
-        private Renderer _renderer;
+        [SerializeField] private Renderer _renderer;
 
         [SerializeField] private int textureResolution = 256;
 
@@ -22,6 +21,16 @@ namespace Gameframe.Procgen
 
         private Texture2D _texture;
 
+        private float minValue = float.MaxValue;
+        private float maxValue = float.MinValue;
+
+        [ContextMenu("ResetMinMax")]
+        public void ResetMinMax()
+        {
+            minValue = float.MaxValue;
+            maxValue = float.MinValue;
+        }
+
         public enum Dimension
         {
             Value1D,
@@ -32,9 +41,13 @@ namespace Gameframe.Procgen
             Perlin3D,
             SamplePerlin2D,
             SamplePerlin3D,
+            SimplexValue1D,
+            SimplexValue2D,
         }
 
         [SerializeField] private Dimension dimension = Dimension.Value2D;
+
+        [SerializeField] private Vector3 offset;
 
         private void OnEnable()
         {
@@ -48,7 +61,7 @@ namespace Gameframe.Procgen
 
         private Texture2D CreateTexture()
         {
-            var tex =  new Texture2D(textureResolution, textureResolution)
+            var tex = new Texture2D(textureResolution, textureResolution)
             {
                 filterMode = filterMode
             };
@@ -75,10 +88,10 @@ namespace Gameframe.Procgen
 
             _texture.filterMode = filterMode;
 
-            var point00 = transform.TransformPoint(new Vector3(-0.5f,-0.5f));
-            var point10 = transform.TransformPoint(new Vector3( 0.5f,-0.5f));
+            var point00 = transform.TransformPoint(new Vector3(-0.5f, -0.5f));
+            var point10 = transform.TransformPoint(new Vector3(0.5f, -0.5f));
             var point01 = transform.TransformPoint(new Vector3(-0.5f, 0.5f));
-            var point11 = transform.TransformPoint(new Vector3( 0.5f, 0.5f));
+            var point11 = transform.TransformPoint(new Vector3(0.5f, 0.5f));
 
             var stepSize = 1f / textureResolution;
 
@@ -89,42 +102,61 @@ namespace Gameframe.Procgen
 
                 for (var x = 0; x < textureResolution; x++)
                 {
-                    var point = Vector3.Lerp(point0, point1, (x + 0.5f) * stepSize);
+                    var point = Vector3.Lerp(point0, point1, (x + 0.5f) * stepSize) + offset;
                     var v = 0f;
 
                     switch (dimension)
                     {
                         case Dimension.Value1D:
-                            v = ValueNoise.Fractal1D(point.x * frequency, seed, frequency, octaves, lacunarity, persistence);
+                            v = ValueNoise.Fractal1D(point.x * frequency, seed, frequency, octaves, lacunarity,
+                                persistence);
                             break;
                         case Dimension.Value2D:
-                            v = ValueNoise.Fractal2D(point * frequency, seed, frequency, octaves, lacunarity, persistence);
+                            v = ValueNoise.Fractal2D(point * frequency, seed, frequency, octaves, lacunarity,
+                                persistence);
                             break;
                         case Dimension.Value3D:
-                            v = ValueNoise.Fractal3D(point * frequency, seed, frequency, octaves, lacunarity, persistence);
+                            v = ValueNoise.Fractal3D(point * frequency, seed, frequency, octaves, lacunarity,
+                                persistence);
                             break;
                         case Dimension.Perlin1D:
-                            v = PerlinGradientNoise.Fractal1D(point.x, seed, frequency, octaves, lacunarity, persistence);
+                            v = PerlinGradientNoise.Fractal1D(point.x, seed, frequency, octaves, lacunarity,
+                                persistence);
                             break;
                         case Dimension.Perlin2D:
-                            v = PerlinGradientNoise.Fractal2D(point.x, point.y, seed, frequency, octaves, lacunarity, persistence);
+                            v = PerlinGradientNoise.Fractal2D(point.x, point.y, seed, frequency, octaves, lacunarity,
+                                persistence);
                             break;
                         case Dimension.Perlin3D:
-                            v = PerlinGradientNoise.Fractal3D(point.x, point.y, point.z, seed, frequency, octaves, lacunarity, persistence);
+                            v = PerlinGradientNoise.Fractal3D(point.x, point.y, point.z, seed, frequency, octaves,
+                                lacunarity, persistence);
                             break;
                         case Dimension.SamplePerlin2D:
-                            v = PerlinGradientNoise.FractalSample2D(point.x, point.y, seed, frequency, octaves, lacunarity, persistence).value;
+                            v = PerlinGradientNoise.FractalSample2D(point.x, point.y, seed, frequency, octaves,
+                                lacunarity, persistence).value;
                             break;
                         case Dimension.SamplePerlin3D:
-                            v = PerlinGradientNoise.FractalSample3D(point.x, point.y, point.z, seed, frequency, octaves, lacunarity, persistence).value;
+                            v = PerlinGradientNoise.FractalSample3D(point.x, point.y, point.z, seed, frequency, octaves,
+                                lacunarity, persistence).value;
+                            break;
+                        case Dimension.SimplexValue1D:
+                            v = SimplexGradientNoise.SimplexValue1D(point.x, seed, frequency).value;
+                            break;
+                        case Dimension.SimplexValue2D:
+                            v = SimplexGradientNoise.SimplexValue2D(point.x, point.y, seed, frequency).value;
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
 
-                    _texture.SetPixel(x,y, new Color(v,v,v,1f));
+                    minValue = Mathf.Min(v, minValue);
+                    maxValue = Mathf.Max(v, maxValue);
+
+                    _texture.SetPixel(x, y, new Color(v, v, v, 1f));
                 }
             }
+
+            Debug.Log($"Min: {minValue} Max: {maxValue}");
 
             _texture.Apply();
 
@@ -139,7 +171,8 @@ namespace Gameframe.Procgen
                 Debug.LogError("Texture does not exist");
                 return;
             }
-            TextureUtility.SaveTextureAsPNG(_texture,Application.dataPath + "GeneratedTexture.png");
+
+            TextureUtility.SaveTextureAsPNG(_texture, Application.dataPath + "GeneratedTexture.png");
         }
 
         private void ClearTexture()
@@ -165,6 +198,4 @@ namespace Gameframe.Procgen
             }
         }
     }
-
-
 }

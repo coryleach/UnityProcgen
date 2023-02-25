@@ -57,6 +57,7 @@ namespace Gameframe.Procgen
             Perlin1D,
             Perlin2D,
             Perlin3D,
+            Simplex1D,
         }
 
         [SerializeField] private Dimension dimension = Dimension.Value2D;
@@ -177,13 +178,16 @@ namespace Gameframe.Procgen
                 case Dimension.Perlin3D:
                     sample = PerlinGradientNoise.FractalSample3D(point.x, point.y, point.z, seed, frequency, octaves, lacunarity, persistence);
                     break;
+                case Dimension.Simplex1D:
+                    //sample = SimplexGradientNoise.Noise1D(point.x, seed);
+                    break;
             }
-
             return sample;
         }
 
         private void CreateMesh()
         {
+            Debug.Log("Create Mesh");
             currentResolution = resolution;
 
             if (mesh == null)
