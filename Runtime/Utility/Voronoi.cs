@@ -5,6 +5,9 @@ using UnityEngine;
 namespace Gameframe.Procgen
 {
 
+    /// <summary>
+    /// Utility class for generating Voronoi cell diagrams
+    /// </summary>
     public static class Voronoi
     {
         public static VoronoiData Create(int width, int height, int regionCount, int seed)
