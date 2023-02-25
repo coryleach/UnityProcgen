@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Gameframe.Procgen
 {
@@ -16,10 +17,10 @@ namespace Gameframe.Procgen
         [SerializeField] private bool step = false;
 
         [SerializeField] private int stepCount = 10;
-        
+
         [SerializeField] private Vector2 offset = Vector2.zero;
 
-        [SerializeField] private float noiseScale = 1;
+        [FormerlySerializedAs("noiseScale")] [SerializeField] private float frequency = 1;
 
         [SerializeField] private int octaves = 4;
 
@@ -33,14 +34,14 @@ namespace Gameframe.Procgen
 
         [SerializeField] private MapType mapType = MapType.Noise;
 
-        public HeightMapLayerData Generate(int width, int height, int seed)
+        public HeightMapLayerData Generate(int width, int height, uint seed)
         {
             float[,] noiseMap;
 
             switch (mapType)
             {
                 case MapType.Noise:
-                    noiseMap = Noise.GenerateNoiseMap(width, height, seed, offset, noiseScale, octaves,
+                    noiseMap = Noise.GenerateNoiseMap(width, height, seed, offset, frequency, octaves,
                         persistence, lacunarity);
                     break;
                 case MapType.Falloff:
@@ -48,8 +49,7 @@ namespace Gameframe.Procgen
                     break;
                 case MapType.NoiseWithFalloff:
                     var falloffMap = Noise.GenerateFalloffMap(width, height, falloffA, falloffB);
-                    noiseMap = Noise.GenerateNoiseMap(width, height, seed, offset, noiseScale, octaves,
-                        persistence, lacunarity, falloffMap);
+                    noiseMap = Noise.GenerateNoiseMap(width, height, seed, offset, frequency, octaves, persistence, lacunarity, falloffMap);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -66,11 +66,11 @@ namespace Gameframe.Procgen
                     {
                         val = Mathf.RoundToInt(val * stepCount) / (float)stepCount;
                     }
-                    
+
                     heightMap[y * width + x] = val;
                 }
             }
-            
+
             return new HeightMapLayerData
             {
                 heightMap = heightMap
@@ -79,7 +79,7 @@ namespace Gameframe.Procgen
 
         public override void AddToWorld(WorldMapData worldMapData)
         {
-            worldMapData.layers.Add(Generate(worldMapData.width,worldMapData.height,worldMapData.seed));
+            worldMapData.layers.Add(Generate(worldMapData.width,worldMapData.height,(uint)worldMapData.seed));
         }
 
         private void OnValidate()
@@ -96,4 +96,3 @@ namespace Gameframe.Procgen
     }
 
 }
-

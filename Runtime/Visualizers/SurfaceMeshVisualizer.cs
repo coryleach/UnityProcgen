@@ -101,8 +101,10 @@ namespace Gameframe.Procgen
             }
         }
 
-        float minSample = float.MaxValue;
-        float maxSample = float.MinValue;
+        [SerializeField]
+        private float minSample = float.MaxValue;
+        [SerializeField]
+        private float maxSample = float.MinValue;
 
         [ContextMenu("ResetMinMax")]
         public void ResetMinMax()
@@ -143,7 +145,7 @@ namespace Gameframe.Procgen
                 }
             }
 
-            Debug.Log($"Min: {minSample} Max:{maxSample}");
+            //Debug.Log($"Min: {minSample} Max:{maxSample}");
 
             mesh.vertices = vertices;
             mesh.normals = normals;

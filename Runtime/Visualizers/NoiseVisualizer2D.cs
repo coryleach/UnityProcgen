@@ -21,8 +21,6 @@ namespace Gameframe.Procgen
 
         private Texture2D _texture;
 
-        private float minValue = float.MaxValue;
-        private float maxValue = float.MinValue;
 
         [ContextMenu("ResetMinMax")]
         public void ResetMinMax()
@@ -52,6 +50,12 @@ namespace Gameframe.Procgen
         [SerializeField] private Dimension dimension = Dimension.Value2D;
 
         [SerializeField] private Vector3 offset;
+
+        [SerializeField]
+        private float minValue = float.MaxValue;
+        [SerializeField]
+        private float maxValue = float.MinValue;
+
 
         private void OnEnable()
         {
@@ -128,8 +132,7 @@ namespace Gameframe.Procgen
                                 persistence);
                             break;
                         case Dimension.Perlin3D:
-                            v = PerlinGradientNoise.Fractal3D(point.x, point.y, point.z, seed, frequency, octaves,
-                                lacunarity, persistence);
+                            v = PerlinGradientNoise.Fractal3D(point.x, point.y, point.z, seed, frequency, octaves, lacunarity, persistence);
                             break;
                         case Dimension.SamplePerlin2D:
                             v = PerlinGradientNoise.FractalSample2D(point.x, point.y, seed, frequency, octaves, lacunarity, persistence).value;
