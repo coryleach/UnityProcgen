@@ -3,7 +3,7 @@
   "name": "com.gameframe.procgen",
   "displayName": "Gameframe.Procgen",
   "repositoryName": "UnityProcgen",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Library of utilitities for procedural generation",
   "type": "library",
   "keywords": [],
