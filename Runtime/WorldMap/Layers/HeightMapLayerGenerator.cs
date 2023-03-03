@@ -9,16 +9,18 @@ namespace Gameframe.Procgen
     {
         public enum MapType
         {
-            Noise,
+            ValueNoise,
+            SimplexNoise,
+            PerlinNoise,
             Falloff,
-            NoiseWithFalloff
+            SimplexNoiseWithFalloff,
+            PerlinNoiseWithFalloff,
+            ValueNoiseWithFalloff
         }
 
         [SerializeField] private bool step = false;
 
         [SerializeField] private int stepCount = 10;
-
-        [SerializeField] private Vector2 offset = Vector2.zero;
 
         [FormerlySerializedAs("noiseScale")] [SerializeField] private float frequency = 1;
 
@@ -32,42 +34,61 @@ namespace Gameframe.Procgen
 
         [SerializeField] private float falloffB = 2.2f;
 
-        [SerializeField] private MapType mapType = MapType.Noise;
+        [SerializeField] private Vector2 falloffOffset = Vector2.zero;
+
+        [SerializeField] private MapType mapType = MapType.SimplexNoise;
 
         public HeightMapLayerData Generate(int width, int height, uint seed)
         {
-            float[,] noiseMap;
-
-            switch (mapType)
+            var heightMap = new float[width*height];
+            for (var y = 0; y < height; y++)
             {
-                case MapType.Noise:
-                    noiseMap = Noise.GenerateNoiseMap(width, height, seed, offset, frequency, octaves,
-                        persistence, lacunarity);
-                    break;
-                case MapType.Falloff:
-                    noiseMap = Noise.GenerateFalloffMap(width, height, falloffA, falloffB);
-                    break;
-                case MapType.NoiseWithFalloff:
-                    var falloffMap = Noise.GenerateFalloffMap(width, height, falloffA, falloffB);
-                    noiseMap = Noise.GenerateNoiseMap(width, height, seed, offset, frequency, octaves, persistence, lacunarity, falloffMap);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            float[] heightMap = new float[width*height];
-            for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < width; x++)
+                for (var x = 0; x < width; x++)
                 {
-                    var val = noiseMap[x, y];
+                    var i = y * width + x;
+                    switch (mapType)
+                    {
+                        case MapType.ValueNoise:
+                            heightMap[i] = ValueNoise.Fractal2D(x, y, (uint) seed, frequency, octaves, lacunarity, persistence);
+                            break;
+                        case MapType.PerlinNoise:
+                            heightMap[i] = PerlinGradientNoise.Fractal2D(x, y, (uint) seed, frequency, octaves, lacunarity, persistence);
+                            break;
+                        case MapType.SimplexNoise:
+                            heightMap[i] = SimplexGradientNoise.FractalGradient2D(x, y, (uint) seed, frequency, octaves, lacunarity, persistence).value;
+                            break;
+                        case MapType.Falloff:
+                            heightMap[i] = Noise.GenerateFalloffPoint(x , y , width, height, falloffA, falloffB, falloffOffset);
+                            break;
+                        case MapType.SimplexNoiseWithFalloff:
+                        {
+                            var falloff = Noise.GenerateFalloffPoint(x , y, width, height, falloffA, falloffB, falloffOffset);
+                            heightMap[i] = SimplexGradientNoise.FractalGradient2D(x, y, (uint) seed, frequency, octaves, lacunarity, persistence).value;
+                            heightMap[i] *= falloff;
+                        }
+                            break;
+                        case MapType.PerlinNoiseWithFalloff:
+                        {
+                            var falloff = Noise.GenerateFalloffPoint(x, y, width, height, falloffA, falloffB, falloffOffset);
+                            heightMap[i] = PerlinGradientNoise.Fractal2D(x, y, (uint) seed, frequency, octaves, lacunarity, persistence);
+                            heightMap[i] *= falloff;
+                        }
+                            break;
+                        case MapType.ValueNoiseWithFalloff:
+                        {
+                            var falloff = Noise.GenerateFalloffPoint(x, y, width, height, falloffA, falloffB, falloffOffset);
+                            heightMap[i] = ValueNoise.Fractal2D(x, y, (uint) seed, frequency, octaves, lacunarity, persistence);
+                            heightMap[i] *= falloff;
+                        }
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
 
                     if (step)
                     {
-                        val = Mathf.RoundToInt(val * stepCount) / (float)stepCount;
+                        heightMap[i] = Mathf.RoundToInt(heightMap[i] * stepCount) / (float)stepCount;
                     }
-
-                    heightMap[y * width + x] = val;
                 }
             }
 
