@@ -4,13 +4,13 @@ using UnityEngine;
 
 namespace Gameframe.Procgen
 {
-  
+
   public static class PoissonDiskSampling
   {
     public static List<Vector2> GeneratePoints(float radius, Vector2 size, int seed, int maxSamplesPerPoint = 30,
       Func<Vector2, bool> validate = null)
     {
-      var rng = new System.Random(seed);
+      var rng = new RandomGeneratorStruct((uint)seed);
       var points = new List<Vector2>();
       var cellSize = radius / Mathf.Sqrt(2);
       var gridWidth = Mathf.CeilToInt(size.x / cellSize);
@@ -24,17 +24,17 @@ namespace Gameframe.Procgen
       while (spawnPoints.Count > 0)
       {
         //Get a random spawn point from the list
-        var spawnIndex = rng.Next(0, spawnPoints.Count);
+        var spawnIndex = rng.NextIntRange(0, spawnPoints.Count-1);
         var spawnCenter = spawnPoints[spawnIndex];
         var accepted = false;
 
         for (int i = 0; i < maxSamplesPerPoint; i++)
         {
           //Get a random direction vector
-          var angle = (float) (rng.NextDouble() * Mathf.PI * 2);
+          var angle = (float) (rng.NextFloatZeroToOne() * Mathf.PI * 2);
           var dir = new Vector2(Mathf.Sin(angle), Mathf.Cos(angle));
           //Get point along that direction vector between radius and 2radius distance away
-          var distance = (float) (radius + rng.NextDouble() * radius * 2);
+          var distance = (float) (radius + rng.NextFloatZeroToOne() * radius * 2);
           var candidate = spawnCenter + dir * distance;
 
           //If point is valid we can accept it stop sampling
@@ -60,14 +60,14 @@ namespace Gameframe.Procgen
       return points;
     }
 
-    public static List<Vector2Int> GenerateIntPoints(float radius, Vector2Int size, int seed,
-      int maxSamplesPerPoint = 30, Func<Vector2Int, bool> validate = null)
+    public static List<Vector2Int> GenerateIntPoints(float radius, Vector2Int size, int seed, int maxSamplesPerPoint = 30, Func<Vector2Int, bool> validate = null)
     {
-      var rng = new System.Random(seed);
+      var rng = new RandomGeneratorStruct((uint)seed);
       var points = new List<Vector2Int>();
       var cellSize = radius / Mathf.Sqrt(2);
       var gridWidth = Mathf.CeilToInt(size.x / cellSize);
       var gridHeight = Mathf.CeilToInt(size.y / cellSize);
+
       //Grid values equal to zero mean there is no point in that grid cell
       var grid = new int[gridWidth, gridHeight];
       var spawnPoints = new List<Vector2Int>();
@@ -77,17 +77,17 @@ namespace Gameframe.Procgen
       while (spawnPoints.Count > 0)
       {
         //Get a random spawn point from the list
-        var spawnIndex = rng.Next(0, spawnPoints.Count);
+        var spawnIndex = rng.NextIntRange(0, spawnPoints.Count - 1);
         var spawnCenter = spawnPoints[spawnIndex];
         var accepted = false;
 
         for (int i = 0; i < maxSamplesPerPoint; i++)
         {
           //Get a random direction vector
-          var angle = (float) (rng.NextDouble() * Mathf.PI * 2);
+          var angle = (float) (rng.NextFloatZeroToOne() * Mathf.PI * 2);
           var dir = new Vector2(Mathf.Sin(angle), Mathf.Cos(angle));
           //Get point along that direction vector between radius and 2radius distance away
-          var distance = (float) (radius + rng.NextDouble() * radius * 2);
+          var distance = (float) (radius + rng.NextFloatZeroToOne() * radius * 2);
           var pt = spawnCenter + dir * distance;
           var candidate = new Vector2Int((int) pt.x, (int) pt.y);
 

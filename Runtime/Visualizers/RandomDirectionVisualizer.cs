@@ -19,7 +19,7 @@ namespace Gameframe.Procgen
         public Color sphereColor = Color.white;
         public Color pointColor = Color.white;
 
-        private NoiseRng rand;
+        private RandomGenerator rand;
 
         public enum DirectionDimensions
         {
@@ -31,7 +31,7 @@ namespace Gameframe.Procgen
         {
             if (rand == null)
             {
-                rand = new NoiseRng(seed);
+                rand = new RandomGenerator(seed);
             }
 
             rand.ReSeed(seed, 0);

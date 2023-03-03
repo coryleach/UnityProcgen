@@ -7,13 +7,13 @@ namespace Gameframe.Procgen
   {
     [SerializeField]
     private float radius = 10;
-    
+
     [SerializeField]
     private int maxSamplesPerPoint = 30;
-    
+
     [SerializeField]
     private bool useRegions = true;
-    
+
     [SerializeField]
     private int edgeAvoidance;
 
@@ -81,8 +81,7 @@ namespace Gameframe.Procgen
 
     private void AddToWorldDefault(WorldMapData mapData)
     {
-      var points = PoissonDiskSampling.GenerateIntPoints(radius, new Vector2Int(mapData.width, mapData.height),
-        mapData.seed, maxSamplesPerPoint);
+      var points = PoissonDiskSampling.GenerateIntPoints(radius, new Vector2Int(mapData.width, mapData.height), mapData.seed, maxSamplesPerPoint);
       var layer = new PoissonMapLayerData
       {
         points = points
