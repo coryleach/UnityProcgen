@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Gameframe.Procgen
 {
-  
+
   public class WorldMapHexMeshView : WorldMapView, IWorldMapView
   {
     [SerializeField] private WorldMapViewChunk _prefab = null;
@@ -17,7 +17,7 @@ namespace Gameframe.Procgen
     [SerializeField] private bool smooth = false;
 
     [SerializeField, Range(0,1f)] private float border = 0.25f;
-    
+
     [SerializeField] private List<WorldMapViewChunk> chunkList = new List<WorldMapViewChunk>();
     private readonly Dictionary<Vector2, WorldMapViewChunk> _chunks = new Dictionary<Vector2, WorldMapViewChunk>();
 
@@ -28,7 +28,7 @@ namespace Gameframe.Procgen
     {
       //This is here just to show the enable checkbox in editor
     }
-    
+
     private void OnDisable()
     {
       ClearChunks();
@@ -55,10 +55,10 @@ namespace Gameframe.Procgen
       }
 
       _mapData = mapData;
-      _heightMap = _mapData.GetLayer<HeightMapLayerData>().heightMap;
-      
+      _heightMap = _mapData.GetLayer<IFloatMapLayerData>().FloatMap;
+
       ClearChunks();
-      
+
       //Chunks
       var chunksWide = Mathf.CeilToInt(mapData.width / (float)chunkWidth);
       var chunksHigh = Mathf.CeilToInt(mapData.height / (float)chunkHeight);
@@ -84,13 +84,13 @@ namespace Gameframe.Procgen
         {
           return Color.white;
         }
-          
+
         var terrainType = terrainTable.GetTerrainType(height);
         if (!useColorGradient)
         {
           return terrainType.ColorGradient.Evaluate(0);
         }
-        
+
         var t = Mathf.InverseLerp(terrainType.Floor, terrainType.Threshold, height);
         return terrainType.ColorGradient.Evaluate(t);
     }
@@ -120,7 +120,7 @@ namespace Gameframe.Procgen
       chunkList.Add(chunk);
       return chunk;
     }
-    
+
     [ContextMenu("Clear Chunks")]
     public void ClearChunks()
     {
@@ -148,4 +148,3 @@ namespace Gameframe.Procgen
   }
 
 }
-

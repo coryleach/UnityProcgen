@@ -15,7 +15,7 @@ namespace Gameframe.Procgen
         }
     }
 
-    public interface IFloatMapLayerData
+    public interface IFloatMapLayerData : IWorldMapLayerData
     {
         public float[] FloatMap { get; }
     }

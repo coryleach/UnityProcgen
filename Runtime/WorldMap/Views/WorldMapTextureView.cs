@@ -37,13 +37,13 @@ namespace Gameframe.Procgen
                 return;
             }
 
-            var heightMapLayer = worldMapData.GetLayer<HeightMapLayerData>();
+            var heightMapLayer = worldMapData.GetLayer<IFloatMapLayerData>();
             var regionMapLayer = worldMapData.GetLayer<RegionMapLayerData>();
 
             var width = worldMapData.width;
             var height = worldMapData.height;
 
-            var heightMap = heightMapLayer.heightMap;
+            var heightMap = heightMapLayer.FloatMap;
             var regions = regionMapLayer.regions;
             var regionMap = regionMapLayer.regionMap;
 

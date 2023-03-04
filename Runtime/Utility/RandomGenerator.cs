@@ -4,7 +4,9 @@ using UnityEngine;
 namespace Gameframe.Procgen
 {
     /// <summary>
-    /// Noise based random number generator (Struct version)
+    /// Noise based random number generator Struct version
+    /// If this will be passed as a method arg use class version to avoid generating duplicate values
+    ///
     /// Allows for fast random-access within a sequence of generated numbers
     /// Based on GDC 2017 talk and code by Squirrel Eiserloh
     /// </summary>
@@ -122,6 +124,36 @@ namespace Gameframe.Procgen
         public float NextFloatRange(float min, float max)
         {
             var v= SquirrelEiserloh.Get1dNoiseZeroToOne(position++, seed);
+            return min + (max - min) * v;
+        }
+
+        /// <summary>
+        /// Next random double in the range 0 to 1
+        /// </summary>
+        /// <returns>Next random double in the range 0 to 1 (inclusive, inclusive)</returns>
+        public double NextDoubleZeroToOne()
+        {
+            return SquirrelEiserloh.Get1dNoiseZeroToOne_Double(position++, seed);
+        }
+
+        /// <summary>
+        /// Next random double in the range -1 to 1
+        /// </summary>
+        /// <returns>Next random double in the range -1 to 1 (inclusive, inclusive)</returns>
+        public double NextDoubleNegOneToOne()
+        {
+            return SquirrelEiserloh.Get1dNoiseNegOneToOne_Double(position++, seed);
+        }
+
+        /// <summary>
+        /// Next random double in the range min to max
+        /// </summary>
+        /// <param name="min">min return value</param>
+        /// <param name="max">max return value</param>
+        /// <returns>Next random double in the range min to max (inclusive, inclusive)</returns>
+        public double NextDoubleRange(double min, double max)
+        {
+            var v= SquirrelEiserloh.Get1dNoiseZeroToOne_Double(position++, seed);
             return min + (max - min) * v;
         }
 
@@ -284,6 +316,21 @@ namespace Gameframe.Procgen
         /// <param name="max">max return value</param>
         /// <returns>Next random float in the range min to max (inclusive, inclusive)</returns>
         public float NextFloatRange(float min, float max) => _randomGeneratorStruct.NextFloatRange(min,max);
+
+        public double NextDoubleZeroToOne()
+        {
+            return _randomGeneratorStruct.NextDoubleZeroToOne();
+        }
+
+        public double NextDoubleNegOneToOne()
+        {
+            return _randomGeneratorStruct.NextDoubleNegOneToOne();
+        }
+
+        public double NextDoubleRange(double min, double max)
+        {
+            return _randomGeneratorStruct.NextDoubleRange(min, max);
+        }
 
         /// <summary>
         /// Next random integer in the range min to max

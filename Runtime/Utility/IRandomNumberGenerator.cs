@@ -16,6 +16,9 @@ namespace Gameframe.Procgen
         float NextFloatZeroToOne();
         float NextFloatNegOneToOne();
         float NextFloatRange(float min, float max);
+        double NextDoubleZeroToOne();
+        double NextDoubleNegOneToOne();
+        double NextDoubleRange(double min, double max);
         bool RollChance(float probabilityOfReturningTrue);
         Vector2 NextDirection2D();
         Vector3 NextDirection3D();

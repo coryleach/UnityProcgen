@@ -38,7 +38,7 @@ namespace Gameframe.Procgen
 
         [SerializeField] private MapType mapType = MapType.SimplexNoise;
 
-        public HeightMapLayerData Generate(int width, int height, uint seed)
+        public FloatMapLayerData Generate(int width, int height, uint seed)
         {
             var heightMap = new float[width*height];
             for (var y = 0; y < height; y++)
@@ -92,9 +92,9 @@ namespace Gameframe.Procgen
                 }
             }
 
-            return new HeightMapLayerData
+            return new FloatMapLayerData()
             {
-                heightMap = heightMap
+                FloatMap = heightMap
             };
         }
 

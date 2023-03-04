@@ -54,11 +54,11 @@ namespace Gameframe.Procgen
 
     public static float GenerateFalloffPoint(int x, int y, int width, int height, float a = 3f, float b = 2.2f, Vector2 offset = default)
     {
-      x += Mathf.RoundToInt(width * offset.x);
-      y += Mathf.RoundToInt(height * offset.y);
+      var x2 = x + Mathf.RoundToInt(width * offset.x);
+      var y2 = y + Mathf.RoundToInt(height * offset.y);
 
-      var valueY = (y + 0.5f) / (float) height * 2 - 1;
-      var valueX = (x + 0.5f) / (float) width * 2 - 1;
+      var valueY = (y2 + 0.5f) / (float) height * 2 - 1;
+      var valueX = (x2 + 0.5f) / (float) width * 2 - 1;
       var value = Mathf.Max(Mathf.Abs(valueX), Mathf.Abs(valueY));
       return 1 - FalloffCurve(value, a, b);
     }

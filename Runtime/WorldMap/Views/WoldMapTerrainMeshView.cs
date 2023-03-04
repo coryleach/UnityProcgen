@@ -1,4 +1,4 @@
-﻿//Ignore those dumb 'never assigned to' warnings cuz this is Unity and our fields are serialized 
+﻿//Ignore those dumb 'never assigned to' warnings cuz this is Unity and our fields are serialized
 #pragma warning disable CS0649
 
 using UnityEngine;
@@ -16,9 +16,9 @@ namespace Gameframe.Procgen
         [SerializeField] private TerrainTable terrainTable = null;
 
         [SerializeField] private bool smooth = false;
-        
+
         [SerializeField] private bool useColorGradient = false;
-        
+
         //This is here just to get the enabled checkbox in editor
         private void Start()
         {
@@ -30,7 +30,7 @@ namespace Gameframe.Procgen
             {
                 return;
             }
-            var heightMap = worldMapData.GetLayer<HeightMapLayerData>().heightMap;
+            var heightMap = worldMapData.GetLayer<IFloatMapLayerData>().FloatMap;
 
             if (terrainTable == null)
             {
@@ -49,7 +49,7 @@ namespace Gameframe.Procgen
                             return Mathf.Lerp(terrainType.MinElevation, terrainType.MaxElevation, t) * heightScale;
                         }
                         return terrainTable.GetTerrainType(x).MinElevation * heightScale;
-                    }, 
+                    },
                     x =>
                     {
                         var terrainType = terrainTable.GetTerrainType(x);
@@ -62,8 +62,8 @@ namespace Gameframe.Procgen
                     });
                 _meshFilter.mesh = meshData.CreateMesh();
             }
-            
+
         }
-        
+
     }
 }

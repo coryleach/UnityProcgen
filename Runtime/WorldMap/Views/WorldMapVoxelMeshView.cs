@@ -1,4 +1,4 @@
-﻿//Ignore those dumb 'never assigned to' warnings cuz this is Unity and our fields are serialized 
+﻿//Ignore those dumb 'never assigned to' warnings cuz this is Unity and our fields are serialized
 #pragma warning disable CS0649
 
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ namespace Gameframe.Procgen
     [SerializeField] private int chunkWidth = 16;
 
     [SerializeField] private int chunkHeight = 16;
-    
+
     [SerializeField] private bool edges = false;
 
     [SerializeField] private float edgeThickness = 1f;
@@ -43,7 +43,7 @@ namespace Gameframe.Procgen
         return;
       }
 
-      var heightMap = mapData.GetLayer<HeightMapLayerData>().heightMap;
+      var heightMap = mapData.GetLayer<IFloatMapLayerData>().FloatMap;
       int chunksWide = Mathf.CeilToInt(mapData.width / (float) chunkWidth);
       int chunksHigh = Mathf.CeilToInt(mapData.height / (float) chunkHeight);
 

@@ -15,13 +15,13 @@ namespace Gameframe.Procgen
       var rng = new RandomGenerator((uint)layerSeed);
       var regionLayer = new RegionMapLayerData();
 
-      var heightMapLayer = mapData.GetLayer<HeightMapLayerData>();
-      if (heightMapLayer == null)
+      var floatMapLayerData = mapData.GetLayer<IFloatMapLayerData>();
+      if (floatMapLayerData == null)
       {
         throw new Exception("Cannot generate region layer without a height map");
       }
 
-      var heightMap = heightMapLayer.heightMap;
+      var heightMap = floatMapLayerData.FloatMap;
 
       //Generate stuff
       var regionMap = new int[mapData.width * mapData.height];
