@@ -4,7 +4,7 @@ using UnityEngine.Serialization;
 
 namespace Gameframe.Procgen
 {
-    [CreateAssetMenu(menuName = "Gameframe/Procgen/Layers/HeightMapLayerGenerator")]
+    [CreateAssetMenu(menuName = "Gameframe/Procgen/Layers/Height Map")]
     public class HeightMapLayerGenerator : WorldMapLayerGenerator
     {
         public enum MapType
@@ -98,9 +98,9 @@ namespace Gameframe.Procgen
             };
         }
 
-        public override void AddToWorld(WorldMapData worldMapData)
+        protected override IWorldMapLayerData GenerateLayer(WorldMapData mapData, int layerSeed)
         {
-            worldMapData.layers.Add(Generate(worldMapData.width,worldMapData.height,(uint)worldMapData.seed));
+            return Generate(mapData.width,mapData.height,(uint)layerSeed);
         }
 
         private void OnValidate()

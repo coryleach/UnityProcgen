@@ -9,7 +9,7 @@ namespace Gameframe.Procgen
     [SerializeField] private int mapWidth = 100;
     [SerializeField] private int mapHeight = 100;
     [SerializeField] private List<WorldMapLayerGenerator> layerGenerators = new List<WorldMapLayerGenerator>();
-    
+
     public WorldMapData GenerateMap(int seed)
     {
       var worldData = new WorldMapData
@@ -18,12 +18,14 @@ namespace Gameframe.Procgen
         width = mapWidth,
         height = mapHeight
       };
-      
+
+      var rng = new RandomGeneratorStruct((uint)seed);
       for (int i = 0; i < layerGenerators.Count; i++)
       {
-        layerGenerators[i].AddToWorld(worldData);
+        //Generate each layer with its own seed
+        layerGenerators[i].AddToWorld(worldData,rng.NextInt());
       }
-      
+
       return worldData;
     }
 

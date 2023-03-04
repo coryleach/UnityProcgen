@@ -2,7 +2,7 @@
 
 namespace Gameframe.Procgen
 {
-  [CreateAssetMenu(menuName = "Gameframe/Procgen/Layers/PoissonMapLayerGenerator")]
+  [CreateAssetMenu(menuName = "Gameframe/Procgen/Layers/Poisson Map")]
   public class PoissonMapLayerGenerator : WorldMapLayerGenerator
   {
     [SerializeField]
@@ -17,25 +17,18 @@ namespace Gameframe.Procgen
     [SerializeField]
     private int edgeAvoidance;
 
-    public override void AddToWorld(WorldMapData mapData)
+    protected override IWorldMapLayerData GenerateLayer(WorldMapData mapData, int layerSeed)
     {
-      if (useRegions)
-      {
-        AddToWorldUsingRegions(mapData);
-        return;
-      }
-
-      AddToWorldDefault(mapData);
+      return useRegions ? AddToWorldUsingRegions(mapData,layerSeed) : AddToWorldDefault(mapData,layerSeed);
     }
 
-    private void AddToWorldUsingRegions(WorldMapData mapData)
+    private IWorldMapLayerData AddToWorldUsingRegions(WorldMapData mapData, int layerSeed)
     {
       var regionLayer = mapData.GetLayer<RegionMapLayerData>();
       var regionMap = regionLayer.regionMap;
 
       //Only select points in valid regions
-      var points = PoissonDiskSampling.GenerateIntPoints(radius, new Vector2Int(mapData.width, mapData.height),
-        mapData.seed, maxSamplesPerPoint,
+      var points = PoissonDiskSampling.GenerateIntPoints(radius, new Vector2Int(mapData.width, mapData.height), layerSeed, maxSamplesPerPoint,
         (pt) =>
         {
           if (regionMap[pt.y * mapData.width + pt.x] <= 0)
@@ -76,17 +69,18 @@ namespace Gameframe.Procgen
         points = points
       };
 
-      mapData.layers.Add(layer);
+      return layer;
     }
 
-    private void AddToWorldDefault(WorldMapData mapData)
+    private IWorldMapLayerData AddToWorldDefault(WorldMapData mapData, int layerSeed)
     {
-      var points = PoissonDiskSampling.GenerateIntPoints(radius, new Vector2Int(mapData.width, mapData.height), mapData.seed, maxSamplesPerPoint);
+      var points = PoissonDiskSampling.GenerateIntPoints(radius, new Vector2Int(mapData.width, mapData.height), layerSeed, maxSamplesPerPoint);
       var layer = new PoissonMapLayerData
       {
         points = points
       };
-      mapData.layers.Add(layer);
+      return layer;
     }
+
   }
 }

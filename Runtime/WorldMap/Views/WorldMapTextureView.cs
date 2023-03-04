@@ -9,7 +9,7 @@ namespace Gameframe.Procgen
         [SerializeField] private string texturePropertyName = "_BaseMap";
 
         [SerializeField] private TerrainTable _terrainTable = null;
-        
+
         [SerializeField] private bool gradiate = false;
 
         [SerializeField] private bool fillRegions = false;
@@ -29,14 +29,14 @@ namespace Gameframe.Procgen
         {
             //This is here just to show the enabled checkbox in the unity inspector
         }
-        
+
         public async void DisplayMap(WorldMapData worldMapData)
         {
             if (!enabled)
             {
                 return;
             }
-            
+
             var heightMapLayer = worldMapData.GetLayer<HeightMapLayerData>();
             var regionMapLayer = worldMapData.GetLayer<RegionMapLayerData>();
 
@@ -105,7 +105,7 @@ namespace Gameframe.Procgen
                 }
             }
 
-            var texture = TextureUtility.GetColorMap(colorMap, width, height);
+            var texture = TextureUtility.CreateFromColorMap(colorMap, width, height);
             texture.filterMode = filterMode;
             SetTexture(texture);
 
