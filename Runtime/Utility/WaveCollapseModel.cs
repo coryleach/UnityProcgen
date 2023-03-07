@@ -3,6 +3,7 @@
 // Copyright (C) 2023 Cory Leach, The MIT License (MIT)
 
 using System;
+using UnityEngine;
 
 namespace Gameframe.Procgen
 {
@@ -12,12 +13,12 @@ namespace Gameframe.Procgen
 
         protected int[][][] propagator;
         private int[][][] compatible;
-        protected int[] observed;
+        protected int[] observed; //This array is filled with the final output
 
         private (int, int)[] stack;
         private int stacksize, observedSoFar;
 
-        protected int MX, MY, T, N;
+        protected int outputWidth, outputHeight, totalTiles, N;
         protected bool periodic, ground;
 
         protected double[] weights;
@@ -42,35 +43,42 @@ namespace Gameframe.Procgen
 
         protected WaveCollapseModel(int width, int height, int N, bool periodic, Heuristic heuristic)
         {
-            MX = width;
-            MY = height;
+            outputWidth = width;
+            outputHeight = height;
             this.N = N;
             this.periodic = periodic;
             this.heuristic = heuristic;
         }
 
+        public void SetOutputSize(int width, int height)
+        {
+            wave = null;
+            outputWidth = width;
+            outputHeight = height;
+        }
+
         private void Init()
         {
-            wave = new bool[MX * MY][];
+            wave = new bool[outputWidth * outputHeight][];
             compatible = new int[wave.Length][][];
             for (var i = 0; i < wave.Length; i++)
             {
-                wave[i] = new bool[T];
-                compatible[i] = new int[T][];
-                for (var t = 0; t < T; t++)
+                wave[i] = new bool[totalTiles];
+                compatible[i] = new int[totalTiles][];
+                for (var t = 0; t < totalTiles; t++)
                 {
                     compatible[i][t] = new int[4];
                 }
             }
 
-            distribution = new double[T];
-            observed = new int[MX * MY];
+            distribution = new double[totalTiles];
+            observed = new int[outputWidth * outputHeight];
 
-            weightLogWeights = new double[T];
+            weightLogWeights = new double[totalTiles];
             sumOfWeights = 0;
             sumOfWeightLogWeights = 0;
 
-            for (var t = 0; t < T; t++)
+            for (var t = 0; t < totalTiles; t++)
             {
                 weightLogWeights[t] = weights[t] * Math.Log(weights[t]);
                 sumOfWeights += weights[t];
@@ -79,13 +87,68 @@ namespace Gameframe.Procgen
 
             startingEntropy = Math.Log(sumOfWeights) - sumOfWeightLogWeights / sumOfWeights;
 
-            sumsOfOnes = new int[MX * MY];
-            sumsOfWeights = new double[MX * MY];
-            sumsOfWeightLogWeights = new double[MX * MY];
-            entropies = new double[MX * MY];
+            sumsOfOnes = new int[outputWidth * outputHeight];
+            sumsOfWeights = new double[outputWidth * outputHeight];
+            sumsOfWeightLogWeights = new double[outputWidth * outputHeight];
+            entropies = new double[outputWidth * outputHeight];
 
-            stack = new (int, int)[wave.Length * T];
+            stack = new (int, int)[wave.Length * totalTiles];
             stacksize = 0;
+        }
+
+        private RandomGenerator currentRng;
+
+        protected bool isDone = true;
+        public bool IsDone => isDone;
+
+        public void InitRun(int seed)
+        {
+            if (wave == null)
+            {
+                Init();
+            }
+
+            Clear();
+
+            isDone = false;
+            currentRng = new RandomGenerator((uint) seed);
+        }
+
+        public bool StepRun()
+        {
+            //Find the next node to look at
+            //We select it using our heuristic
+            var node = NextUnobservedNode(currentRng);
+            if (node >= 0)
+            {
+
+                Observe(node, currentRng);
+                var success = Propagate();
+                if (!success)
+                {
+                    isDone = true;
+                    return false;
+                }
+            }
+            else
+            {
+                //For each "pixel" or tile loop over all the potential patterns
+                for (var i = 0; i < wave.Length; i++)
+                for (var t = 0; t < totalTiles; t++)
+                {
+                    //If this pattern is marked true we set it as the observed pattern
+                    if (wave[i][t])
+                    {
+                        observed[i] = t;
+                        isDone = true;
+                        break;
+                    }
+                }
+
+                return true;
+            }
+
+            return true;
         }
 
         public bool Run(int seed, int limit)
@@ -101,6 +164,8 @@ namespace Gameframe.Procgen
 
             for (var l = 0; l < limit || limit < 0; l++)
             {
+                //Find the next node to look at
+                //We select it using our heuristic
                 var node = NextUnobservedNode(random);
                 if (node >= 0)
                 {
@@ -113,9 +178,11 @@ namespace Gameframe.Procgen
                 }
                 else
                 {
+                    //For each "pixel" or tile loop over all the potential patterns
                     for (var i = 0; i < wave.Length; i++)
-                    for (var t = 0; t < T; t++)
+                    for (var t = 0; t < totalTiles; t++)
                     {
+                        //If this pattern is marked true we set it as the observed pattern
                         if (wave[i][t])
                         {
                             observed[i] = t;
@@ -136,7 +203,7 @@ namespace Gameframe.Procgen
             {
                 for (var i = observedSoFar; i < wave.Length; i++)
                 {
-                    if (!periodic && (i % MX + N > MX || i / MX + N > MY))
+                    if (!periodic && (i % outputWidth + N > outputWidth || i / outputWidth + N > outputHeight))
                     {
                         continue;
                     }
@@ -155,7 +222,7 @@ namespace Gameframe.Procgen
             var argmin = -1;
             for (var i = 0; i < wave.Length; i++)
             {
-                if (!periodic && (i % MX + N > MX || i / MX + N > MY))
+                if (!periodic && (i % outputWidth + N > outputWidth || i / outputWidth + N > outputHeight))
                 {
                     continue;
                 }
@@ -182,16 +249,21 @@ namespace Gameframe.Procgen
 
         private void Observe(int node, IRandomNumberGenerator random)
         {
-            var w = wave[node];
-            for (var t = 0; t < T; t++)
+            var nodeTileCandidates = wave[node];
+            //Calculate the distribution for the selected node
+            for (var tileIndex = 0; tileIndex < totalTiles; tileIndex++)
             {
-                distribution[t] = w[t] ? weights[t] : 0.0;
+                //Only potentially valid patterns should be considered
+                //All patterns marked as false should be set to zero
+                distribution[tileIndex] = nodeTileCandidates[tileIndex] ? weights[tileIndex] : 0.0;
             }
 
-            var r = distribution.Random(random.NextDoubleZeroToOne());
-            for (var t = 0; t < T; t++)
+            //Select a node to collapse to
+            //All other nodes are eliminated from the possibility pool
+            var randomWeightedIndex = distribution.RandomWeightedIndex(random.NextDoubleZeroToOne());
+            for (var t = 0; t < totalTiles; t++)
             {
-                if (w[t] != (t == r))
+                if (nodeTileCandidates[t] != (t == randomWeightedIndex))
                 {
                     Ban(node, t);
                 }
@@ -202,52 +274,57 @@ namespace Gameframe.Procgen
         {
             while (stacksize > 0)
             {
-                (var i1, var t1) = stack[stacksize - 1];
+                (var bannedNode, var bannedTileIndex) = stack[stacksize - 1];
                 stacksize--;
 
-                var x1 = i1 % MX;
-                var y1 = i1 / MX;
+                var bannedNodeX = bannedNode % outputWidth;
+                var bannedNodeY = bannedNode / outputWidth;
 
-                for (var d = 0; d < 4; d++)
+                for (var directionIndex = 0; directionIndex < 4; directionIndex++)
                 {
-                    var x2 = x1 + dx[d];
-                    var y2 = y1 + dy[d];
-                    if (!periodic && (x2 < 0 || y2 < 0 || x2 + N > MX || y2 + N > MY))
+                    var neighborX = bannedNodeX + dx[directionIndex];
+                    var neighborY = bannedNodeY + dy[directionIndex];
+
+                    //Skip if neighbor is invalid and we're not "periodic"
+                    //Ok so "periodic" means "wrap"
+                    if (!periodic && (neighborX < 0 || neighborY < 0 || neighborX + N > outputWidth || neighborY + N > outputHeight))
                     {
                         continue;
                     }
 
-                    if (x2 < 0)
+                    //Wrap X
+                    if (neighborX < 0)
                     {
-                        x2 += MX;
+                        neighborX += outputWidth;
                     }
-                    else if (x2 >= MX)
+                    else if (neighborX >= outputWidth)
                     {
-                        x2 -= MX;
-                    }
-
-                    if (y2 < 0)
-                    {
-                        y2 += MY;
-                    }
-                    else if (y2 >= MY)
-                    {
-                        y2 -= MY;
+                        neighborX -= outputWidth;
                     }
 
-                    var i2 = x2 + y2 * MX;
-                    var p = propagator[d][t1];
-                    var compat = compatible[i2];
-
-                    for (var l = 0; l < p.Length; l++)
+                    //Wrap Y
+                    if (neighborY < 0)
                     {
-                        var t2 = p[l];
+                        neighborY += outputHeight;
+                    }
+                    else if (neighborY >= outputHeight)
+                    {
+                        neighborY -= outputHeight;
+                    }
+
+                    var neighborNodeIndex = neighborX + neighborY * outputWidth;
+                    var prop = propagator[directionIndex][bannedTileIndex];
+                    var compat = compatible[neighborNodeIndex];
+
+                    for (var i = 0; i < prop.Length; i++)
+                    {
+                        var t2 = prop[i];
                         var comp = compat[t2];
 
-                        comp[d]--;
-                        if (comp[d] == 0)
+                        comp[directionIndex]--;
+                        if (comp[directionIndex] == 0)
                         {
-                            Ban(i2, t2);
+                            Ban(neighborNodeIndex, t2);
                         }
                     }
                 }
@@ -256,32 +333,37 @@ namespace Gameframe.Procgen
             return sumsOfOnes[0] > 0;
         }
 
-        private void Ban(int i, int t)
+        /// <summary>
+        /// Remove a tile from consideration for a given position
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="tileIndex"></param>
+        private void Ban(int node, int tileIndex)
         {
-            wave[i][t] = false;
+            wave[node][tileIndex] = false;
 
-            var comp = compatible[i][t];
-            for (var d = 0; d < 4; d++)
+            var comp = compatible[node][tileIndex];
+            for (var direction = 0; direction < 4; direction++)
             {
-                comp[d] = 0;
+                comp[direction] = 0;
             }
 
-            stack[stacksize] = (i, t);
+            stack[stacksize] = (node, tileIndex);
             stacksize++;
 
-            sumsOfOnes[i] -= 1;
-            sumsOfWeights[i] -= weights[t];
-            sumsOfWeightLogWeights[i] -= weightLogWeights[t];
+            sumsOfOnes[node] -= 1;
+            sumsOfWeights[node] -= weights[tileIndex];
+            sumsOfWeightLogWeights[node] -= weightLogWeights[tileIndex];
 
-            var sum = sumsOfWeights[i];
-            entropies[i] = Math.Log(sum) - sumsOfWeightLogWeights[i] / sum;
+            var sum = sumsOfWeights[node];
+            entropies[node] = Math.Log(sum) - sumsOfWeightLogWeights[node] / sum;
         }
 
         private void Clear()
         {
             for (int i = 0; i < wave.Length; i++)
             {
-                for (int t = 0; t < T; t++)
+                for (int t = 0; t < totalTiles; t++)
                 {
                     wave[i][t] = true;
                     for (int d = 0; d < 4; d++)
@@ -301,16 +383,16 @@ namespace Gameframe.Procgen
 
             if (ground)
             {
-                for (int x = 0; x < MX; x++)
+                for (int x = 0; x < outputWidth; x++)
                 {
-                    for (int t = 0; t < T - 1; t++)
+                    for (int t = 0; t < totalTiles - 1; t++)
                     {
-                        Ban(x + (MY - 1) * MX, t);
+                        Ban(x + (outputHeight - 1) * outputWidth, t);
                     }
 
-                    for (int y = 0; y < MY - 1; y++)
+                    for (int y = 0; y < outputHeight - 1; y++)
                     {
-                        Ban(x + y * MX, T - 1);
+                        Ban(x + y * outputWidth, totalTiles - 1);
                     }
                 }
 

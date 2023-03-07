@@ -1,8 +1,10 @@
+using UnityEngine;
+
 namespace Gameframe.Procgen
 {
     public static class WaveCollapseExtensions
     {
-        public static int Random(this double[] weights, double r)
+        public static int RandomWeightedIndex(this double[] weights, double r)
         {
             double sum = 0;
             for (var i = 0; i < weights.Length; i++)
