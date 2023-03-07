@@ -12,6 +12,7 @@ namespace Gameframe.Procgen
         ushort NextUshort();
         byte NextByte();
         int NextInt();
+        int NextIntRange(int min, int max);
         short NextShort();
         float NextFloatZeroToOne();
         float NextFloatNegOneToOne();
