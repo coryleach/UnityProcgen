@@ -54,6 +54,11 @@ namespace Gameframe.Procgen
         }
       }
 
+      if (regions.Count > 0)
+      {
+        return regions[^1];
+      }
+
       return null;
     }
 
@@ -201,7 +206,7 @@ namespace Gameframe.Procgen
         {
           regions[i].MinElevation = regions[i - 1].MaxElevation;
         }
-        
+
         if (regions[i].MaxElevation < regions[i].MinElevation)
         {
           regions[i].MaxElevation = regions[i].MinElevation;

@@ -9,7 +9,7 @@ namespace Gameframe.Procgen.Tests.Runtime
         [Test]
         public void NoiseRNG_IntRange()
         {
-            var noiseRng = new NoiseRng((uint)DateTime.UtcNow.Ticks);
+            var noiseRng = new RandomGenerator((uint)DateTime.UtcNow.Ticks);
 
             const int maxRange = 2;
             var totals = new int[maxRange+1];
@@ -35,7 +35,7 @@ namespace Gameframe.Procgen.Tests.Runtime
         [Test]
         public void NoiseRNG_RollChance_33percent()
         {
-            var noiseRng = new NoiseRng((uint)DateTime.UtcNow.Ticks);
+            var noiseRng = new RandomGenerator((uint)DateTime.UtcNow.Ticks);
 
             const float probability = 0.33f;
             var totals = new int[2];

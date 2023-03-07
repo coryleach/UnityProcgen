@@ -4,24 +4,24 @@ using UnityEngine;
 
 namespace Gameframe.Procgen
 {
-  [CreateAssetMenu(menuName = "Gameframe/Procgen/Layers/RegionMapLayerGenerator")]
+  [CreateAssetMenu(menuName = "Gameframe/Procgen/Layers/Region Map")]
   public class RegionMapLayerGenerator : WorldMapLayerGenerator
   {
     public int regionCount = 5;
     public float waterLevel = 0.2380952f;
 
-    public override void AddToWorld(WorldMapData mapData)
+    protected override IWorldMapLayerData GenerateLayer(WorldMapData mapData, int layerSeed)
     {
-      var rng = new System.Random(mapData.seed);
+      var rng = new RandomGenerator((uint)layerSeed);
       var regionLayer = new RegionMapLayerData();
 
-      var heightMapLayer = mapData.GetLayer<HeightMapLayerData>();
-      if (heightMapLayer == null)
+      var floatMapLayerData = mapData.GetLayer<IFloatMapLayerData>();
+      if (floatMapLayerData == null)
       {
         throw new Exception("Cannot generate region layer without a height map");
       }
 
-      var heightMap = heightMapLayer.heightMap;
+      var heightMap = floatMapLayerData.FloatMap;
 
       //Generate stuff
       var regionMap = new int[mapData.width * mapData.height];
@@ -41,13 +41,13 @@ namespace Gameframe.Procgen
         }
       }
 
-      List<RegionData> regions = new List<RegionData>();
+      var regions = new List<RegionData>();
 
       for (int i = 0; i < 100 && regions.Count < regionCount; i++)
       {
         //Pick a random point
-        Vector2Int pt = new Vector2Int(rng.Next(0, mapData.width), rng.Next(0, mapData.height));
-        int index = pt.y * mapData.width + pt.x;
+        var pt = new Vector2Int(rng.NextIntRange(0, mapData.width-1), rng.NextIntRange(0, mapData.height-1));
+        var index = pt.y * mapData.width + pt.x;
 
         //If point is not empty try again
         if (regionMap[index] != 0)
@@ -173,14 +173,13 @@ namespace Gameframe.Procgen
       regionLayer.regionMap = regionMap;
       regionLayer.regions = regions;
 
-      mapData.layers.Add(regionLayer);
+      return regionLayer;
     }
 
 
-    private static bool TryExpandRegion(RegionData region, int[] regionMap, int width, int height, System.Random rng,
-      List<Vector2Int> neighbors)
+    private static bool TryExpandRegion(RegionData region, int[] regionMap, int width, int height, RandomGenerator rng, List<Vector2Int> neighbors)
     {
-      var borderPt = region.borderPoints[rng.Next(0, region.borderPoints.Count)];
+      var borderPt = region.borderPoints[rng.NextIntRange(0, region.borderPoints.Count-1)];
       GetEmptyNeighbors(regionMap, width, height, borderPt, neighbors);
 
       if (neighbors.Count == 0)
@@ -189,7 +188,7 @@ namespace Gameframe.Procgen
         return false;
       }
 
-      var neighbor = neighbors[rng.Next(0, neighbors.Count)];
+      var neighbor = neighbors[rng.NextIntRange(0, neighbors.Count-1)];
       AddPointToRegion(region, regionMap, width, height, neighbor);
 
       if (neighbors.Count == 1)

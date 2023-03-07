@@ -153,7 +153,18 @@ namespace Gameframe.Procgen
         /// <returns>random float between 0 and 1</returns>
         public static float Get1dNoiseZeroToOne(int index, uint seed)
         {
-            return (float) (ONE_OVER_MAX_UINT * SquirrelNoise5(index, seed));
+            return (float) Get1dNoiseZeroToOne_Double(index, seed);
+        }
+
+        /// <summary>
+        /// Get random value between 0 and 1 from a 1d noise map
+        /// </summary>
+        /// <param name="index">index of X position in noise map</param>
+        /// <param name="seed">random seed</param>
+        /// <returns>random double between 0 and 1</returns>
+        public static double Get1dNoiseZeroToOne_Double(int index, uint seed)
+        {
+            return (ONE_OVER_MAX_UINT * SquirrelNoise5(index, seed));
         }
 
         /// <summary>
@@ -207,7 +218,18 @@ namespace Gameframe.Procgen
         /// <returns>random float between -1 and 1</returns>
         public static float Get1dNoiseNegOneToOne(int index, uint seed)
         {
-            return (float) (ONE_OVER_MAX_INT * unchecked((int) SquirrelNoise5(index, seed)));
+            return (float)Get1dNoiseNegOneToOne_Double(index, seed);
+        }
+
+        /// <summary>
+        /// Get random value between 0 and 1 from a 1d noise map
+        /// </summary>
+        /// <param name="index">index of position in noise map</param>
+        /// <param name="seed">random seed</param>
+        /// <returns>random double between -1 and 1</returns>
+        public static double Get1dNoiseNegOneToOne_Double(int index, uint seed)
+        {
+            return (ONE_OVER_MAX_INT * unchecked((int) SquirrelNoise5(index, seed)));
         }
 
         /// <summary>
