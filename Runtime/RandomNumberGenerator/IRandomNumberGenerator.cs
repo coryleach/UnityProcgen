@@ -22,6 +22,10 @@ namespace Gameframe.Procgen
         double NextDoubleRange(double min, double max);
         bool RollChance(float probabilityOfReturningTrue);
         Vector2 NextDirection2D();
+        Vector2Int Next4DirectionInt2D();
+        Vector2Int Next8DirectionInt2D();
+        Vector2 Next4Direction2D();
+        Vector2 Next8Direction2D();
         Vector3 NextDirection3D();
     }
 }
