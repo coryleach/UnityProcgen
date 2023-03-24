@@ -2,10 +2,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Gameframe.Procgen;
 using UnityEngine;
-using UnityEngine.Experimental.Rendering;
 
 public class TextureWaveCollapseVisualizer : MonoBehaviour
 {
+    [SerializeField] private ColorWaveCollapseModel modelData;
+
     [SerializeField] private Material _material;
     [SerializeField] private Texture2D _initTexture;
 
@@ -47,6 +48,8 @@ public class TextureWaveCollapseVisualizer : MonoBehaviour
         _material.mainTexture = _outputTexture;
         patterns = _model.GetPatternsAsTextures().ToList();
         _model.InitRun(seed);
+
+        modelData = _model.ModelData;
     }
 
     [ContextMenu("Run")]

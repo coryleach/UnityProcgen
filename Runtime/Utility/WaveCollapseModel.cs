@@ -3,25 +3,24 @@
 // Copyright (C) 2023 Cory Leach, The MIT License (MIT)
 
 using System;
-using UnityEngine;
 
 namespace Gameframe.Procgen
 {
     public abstract class WaveCollapseModel
     {
+        protected WaveCollapseModelData modelData;
+
         protected bool[][] wave;
 
-        protected int[][][] propagator;
         private int[][][] compatible;
         protected int[] observed; //This array is filled with the final output
 
         private (int, int)[] stack;
         private int stacksize, observedSoFar;
 
-        protected int outputWidth, outputHeight, totalTiles, N;
+        protected int outputWidth, outputHeight, totalTiles;
         protected bool periodic, ground;
 
-        protected double[] weights;
         private double[] weightLogWeights, distribution;
 
         protected int[] sumsOfOnes;
@@ -41,11 +40,10 @@ namespace Gameframe.Procgen
 
         private readonly Heuristic heuristic;
 
-        protected WaveCollapseModel(int width, int height, int N, bool periodic, Heuristic heuristic)
+        protected WaveCollapseModel(int width, int height, bool periodic, Heuristic heuristic)
         {
             outputWidth = width;
             outputHeight = height;
-            this.N = N;
             this.periodic = periodic;
             this.heuristic = heuristic;
         }
@@ -80,8 +78,8 @@ namespace Gameframe.Procgen
 
             for (var t = 0; t < totalTiles; t++)
             {
-                weightLogWeights[t] = weights[t] * Math.Log(weights[t]);
-                sumOfWeights += weights[t];
+                weightLogWeights[t] = modelData.weights[t] * Math.Log(modelData.weights[t]);
+                sumOfWeights += modelData.weights[t];
                 sumOfWeightLogWeights += weightLogWeights[t];
             }
 
@@ -203,7 +201,7 @@ namespace Gameframe.Procgen
             {
                 for (var i = observedSoFar; i < wave.Length; i++)
                 {
-                    if (!periodic && (i % outputWidth + N > outputWidth || i / outputWidth + N > outputHeight))
+                    if (!periodic && (i % outputWidth + modelData.patternSize > outputWidth || i / outputWidth + modelData.patternSize > outputHeight))
                     {
                         continue;
                     }
@@ -222,7 +220,7 @@ namespace Gameframe.Procgen
             var argmin = -1;
             for (var i = 0; i < wave.Length; i++)
             {
-                if (!periodic && (i % outputWidth + N > outputWidth || i / outputWidth + N > outputHeight))
+                if (!periodic && (i % outputWidth + modelData.patternSize > outputWidth || i / outputWidth + modelData.patternSize > outputHeight))
                 {
                     continue;
                 }
@@ -255,7 +253,7 @@ namespace Gameframe.Procgen
             {
                 //Only potentially valid patterns should be considered
                 //All patterns marked as false should be set to zero
-                distribution[tileIndex] = nodeTileCandidates[tileIndex] ? weights[tileIndex] : 0.0;
+                distribution[tileIndex] = nodeTileCandidates[tileIndex] ? modelData.weights[tileIndex] : 0.0;
             }
 
             //Select a node to collapse to
@@ -287,7 +285,7 @@ namespace Gameframe.Procgen
 
                     //Skip if neighbor is invalid and we're not "periodic"
                     //Ok so "periodic" means "wrap"
-                    if (!periodic && (neighborX < 0 || neighborY < 0 || neighborX + N > outputWidth || neighborY + N > outputHeight))
+                    if (!periodic && (neighborX < 0 || neighborY < 0 || neighborX + modelData.patternSize > outputWidth || neighborY + modelData.patternSize > outputHeight))
                     {
                         continue;
                     }
@@ -313,7 +311,7 @@ namespace Gameframe.Procgen
                     }
 
                     var neighborNodeIndex = neighborX + neighborY * outputWidth;
-                    var prop = propagator[directionIndex][bannedTileIndex];
+                    var prop = modelData.propagator[directionIndex][bannedTileIndex];
                     var compat = compatible[neighborNodeIndex];
 
                     for (var i = 0; i < prop.Length; i++)
@@ -352,7 +350,7 @@ namespace Gameframe.Procgen
             stacksize++;
 
             sumsOfOnes[node] -= 1;
-            sumsOfWeights[node] -= weights[tileIndex];
+            sumsOfWeights[node] -= modelData.weights[tileIndex];
             sumsOfWeightLogWeights[node] -= weightLogWeights[tileIndex];
 
             var sum = sumsOfWeights[node];
@@ -368,11 +366,11 @@ namespace Gameframe.Procgen
                     wave[i][t] = true;
                     for (int d = 0; d < 4; d++)
                     {
-                        compatible[i][t][d] = propagator[opposite[d]][t].Length;
+                        compatible[i][t][d] = modelData.propagator[opposite[d]][t].Length;
                     }
                 }
 
-                sumsOfOnes[i] = weights.Length;
+                sumsOfOnes[i] = modelData.weights.Length;
                 sumsOfWeights[i] = sumOfWeights;
                 sumsOfWeightLogWeights[i] = sumOfWeightLogWeights;
                 entropies[i] = startingEntropy;
