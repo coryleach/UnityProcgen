@@ -6,9 +6,9 @@ using System;
 
 namespace Gameframe.Procgen
 {
-    public abstract class WaveCollapseModel
+    public abstract class BaseWaveCollapseModel
     {
-        protected WaveCollapseModelData modelData;
+        protected BaseWaveCollapseModelData modelData;
 
         protected bool[][] wave;
 
@@ -40,7 +40,7 @@ namespace Gameframe.Procgen
 
         private readonly Heuristic heuristic;
 
-        protected WaveCollapseModel(int width, int height, bool periodic, Heuristic heuristic)
+        protected BaseWaveCollapseModel(int width, int height, bool periodic, Heuristic heuristic)
         {
             outputWidth = width;
             outputHeight = height;

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Gameframe.Procgen
 {
     [Serializable]
-    public class WaveCollapseModelData
+    public class BaseWaveCollapseModelData
     {
         public List<PatternList> patterns;
         public double[] weights;

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace Gameframe.Procgen
 {
-    public class GenericWaveCollapseModelData<TTiles> : WaveCollapseModelData
+    public class GenericWaveCollapseModelData<TTiles> : BaseWaveCollapseModelData
     {
         public List<TTiles> values;
     }
 
-    public abstract class GenericWaveCollapseModel<TTile> : WaveCollapseModel
+    public abstract class GenericWaveCollapseModel<TTile> : BaseWaveCollapseModel
     {
         public GenericWaveCollapseModelData<TTile> ModelData { get; private set; }
 
@@ -22,12 +22,11 @@ namespace Gameframe.Procgen
             var sourceWidth = width;
             var sourceHeight = height;
 
-            // ReSharper disable once VirtualMemberCallInConstructor
             ModelData = model;
             modelData = model;
 
             ModelData.values = new List<TTile>();
-            ModelData.patterns = new List<WaveCollapseModelData.PatternList>();
+            ModelData.patterns = new List<BaseWaveCollapseModelData.PatternList>();
             ModelData.patternSize = 1 + adjacentDistance * 2;
 
             //This array will map each position in bitmap to an index in _colors
@@ -104,7 +103,7 @@ namespace Gameframe.Procgen
                     {
                         patternIndices.Add(h, weightList.Count);
                         weightList.Add(1.0);
-                        modelData.patterns.Add(new WaveCollapseModelData.PatternList(p));
+                        modelData.patterns.Add(new BaseWaveCollapseModelData.PatternList(p));
                     }
                 }
             }
@@ -113,11 +112,11 @@ namespace Gameframe.Procgen
 
             totalTiles = modelData.weights.Length;
 
-            modelData.propagator = new WaveCollapseModelData.Propagator();
+            modelData.propagator = new BaseWaveCollapseModelData.Propagator();
 
             for (var directionIndex = 0; directionIndex < 4; directionIndex++)
             {
-                modelData.propagator[directionIndex] = new WaveCollapseModelData.PropagatorDirection(totalTiles);
+                modelData.propagator[directionIndex] = new BaseWaveCollapseModelData.PropagatorDirection(totalTiles);
 
                 for (var tileIndex = 0; tileIndex < totalTiles; tileIndex++)
                 {

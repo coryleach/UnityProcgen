@@ -16,7 +16,7 @@ namespace Gameframe.Procgen
         [SerializeField] private bool periodic = false;
         [SerializeField] [Range(1, 8)] private int symmetry = 8;
         [SerializeField] private bool ground = false;
-        [SerializeField] private WaveCollapseModel.Heuristic heuristic;
+        [SerializeField] private BaseWaveCollapseModel.Heuristic heuristic;
 
         [SerializeField] private int seed = 0;
         [SerializeField] private int limit = -1;
