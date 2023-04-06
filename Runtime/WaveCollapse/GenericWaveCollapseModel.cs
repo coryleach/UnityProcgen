@@ -3,19 +3,9 @@ using System.Collections.Generic;
 
 namespace Gameframe.Procgen
 {
-    public class GenericWaveCollapseModelData<TTiles> : BaseWaveCollapseModelData
-    {
-        public List<TTiles> values;
-    }
-
     public abstract class GenericWaveCollapseModel<TTile> : BaseWaveCollapseModel
     {
         public GenericWaveCollapseModelData<TTile> ModelData { get; private set; }
-
-        protected GenericWaveCollapseModel(int width, int height, bool periodic, Heuristic heuristic) : base(width, height, periodic, heuristic)
-        {
-
-        }
 
         protected void BuildModel(GenericWaveCollapseModelData<TTile> model, TTile[] tilemap, int width, int height, int adjacentDistance, int symmetry, bool periodicInput)
         {
@@ -97,10 +87,12 @@ namespace Gameframe.Procgen
                     var h = Hash(p, valueCount);
                     if (patternIndices.TryGetValue(h, out int index))
                     {
-                        weightList[index] = weightList[index] + 1;
+                        //Increase weight of pattern we've already seen
+                        weightList[index] += 1.0;
                     }
                     else
                     {
+                        //New pattern
                         patternIndices.Add(h, weightList.Count);
                         weightList.Add(1.0);
                         modelData.patterns.Add(new BaseWaveCollapseModelData.PatternList(p));
@@ -110,27 +102,27 @@ namespace Gameframe.Procgen
 
             modelData.weights = weightList.ToArray();
 
-            totalTiles = modelData.weights.Length;
+            totalTilePatterns = modelData.weights.Length;
 
             modelData.propagator = new BaseWaveCollapseModelData.Propagator();
 
-            for (var directionIndex = 0; directionIndex < 4; directionIndex++)
+            for (var dir = 0; dir < 4; dir++)
             {
-                modelData.propagator[directionIndex] = new BaseWaveCollapseModelData.PropagatorDirection(totalTiles);
+                modelData.propagator[dir] = new BaseWaveCollapseModelData.PropagatorDirection(totalTilePatterns, dx[dir], dy[dir]);
 
-                for (var tileIndex = 0; tileIndex < totalTiles; tileIndex++)
+                for (var patternIndex = 0; patternIndex < totalTilePatterns; patternIndex++)
                 {
-                    //Build a list of patterns that match this tile for the given direction
+                    //Build a list of patterns that match this pattern in the given direction
                     List<int> tempList = new();
-                    for (var tileIndex2 = 0; tileIndex2 < totalTiles; tileIndex2++)
+                    for (var patternIndex2 = 0; patternIndex2 < totalTilePatterns; patternIndex2++)
                     {
-                        if (Agrees(modelData.patterns[tileIndex].array, modelData.patterns[tileIndex2].array, dx[directionIndex], dy[directionIndex], modelData.patternSize))
+                        if (Agrees(modelData.patterns[patternIndex].array, modelData.patterns[patternIndex2].array, dx[dir], dy[dir], modelData.patternSize))
                         {
-                            tempList.Add(tileIndex2);
+                            tempList.Add(patternIndex2);
                         }
                     }
 
-                    modelData.propagator[directionIndex][tileIndex] = tempList.ToArray();
+                    modelData.propagator[dir][patternIndex] = tempList.ToArray();
                 }
             }
         }
@@ -160,21 +152,7 @@ namespace Gameframe.Procgen
 
         private static bool Agrees(int[] p1, int[] p2, int dx, int dy, int size)
         {
-            var xMin = dx < 0 ? 0 : dx;
-            var xMax = dx < 0 ? dx + size : size;
-            var yMin = dy < 0 ? 0 : dy;
-            var yMax = dy < 0 ? dy + size : size;
-
-            for (var y = yMin; y < yMax; y++)
-            for (var x = xMin; x < xMax; x++)
-            {
-                if (p1[x + size * y] != p2[x - dx + size * (y - dy)])
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return WaveCollapseExtensions.Agrees(p1, p2, dx, dy, size);
         }
 
         private static int[] Pattern(Func<int, int, int> f, int size)
