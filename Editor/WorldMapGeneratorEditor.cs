@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Gameframe.Procgen
 {
     [CustomEditor(typeof(WorldMapGenController), true)]
-    public class WorldMapGeneratorEditor : Editor
+    public class WorldMapGeneratorEditor : UnityEditor.Editor
     {
         private bool autoUpdate = false;
 

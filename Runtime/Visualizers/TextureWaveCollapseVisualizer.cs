@@ -62,7 +62,6 @@ namespace Gameframe.Procgen
 
             if (ground)
             {
-                Debug.Log($"Grounding: (0,{groundY}) = {groundTileIndex}");
                 _model.Ground(groundTileIndex, groundY);
             }
 
