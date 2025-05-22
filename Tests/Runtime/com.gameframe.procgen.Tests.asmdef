@@ -1,1 +1,1 @@
-{ "name": "com.gameframe.procgen.Tests", "references": [ "com.gameframe.procgen" ], "optionalUnityReferences": ["TestAssemblies"], "includePlatforms": ["Editor"], "excludePlatforms": [] }
+{ "name": "com.gameframe.procgen.Tests", "references": [ "com.gameframe.procgen" ], "optionalUnityReferences": ["TestAssemblies"], "defineConstraints": ["UNITY_INCLUDE_TESTS"], "includePlatforms": ["Editor"], "excludePlatforms": [] }
